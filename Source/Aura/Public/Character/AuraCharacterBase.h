@@ -19,4 +19,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, Category = "Combat") // 所有成员指针都要有UPROPERTY宏，否则会被垃圾回收掉
+	TObjectPtr<USkeletalMeshComponent> Weapon;
+
 };
