@@ -1,7 +1,10 @@
 /.git
+/.vs
 /.vscode
 /Content
+/DerivedDataCache
 /Intermediate
+/packages
 /Platforms
 /Saved
 /Plugins/VisualStudioTools/azure-pipelines
