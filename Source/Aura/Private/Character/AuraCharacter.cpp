@@ -47,7 +47,7 @@ void AAuraCharacter::InitAuraHUD()
 	// 多人联机时，非本机玩家的GetController返回nullptr，这种情况我们不想让程序崩溃
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
-		Cast<AAuraHUD>(PC->GetHUD())->InitOverlay(PC, GetPlayerState, AbilitySystemComponent, AttributeSet);
+		Cast<AAuraHUD>(PC->GetHUD())->InitOverlay(PC, GetPlayerState(), AbilitySystemComponent, AttributeSet);
 	}
 
 }
