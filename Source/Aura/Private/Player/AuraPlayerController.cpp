@@ -17,9 +17,11 @@ void AAuraPlayerController::BeginPlay() {
 
     // 
     UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-    check(Subsystem);
-    Subsystem->AddMappingContext(AuraContext, 0);
-
+    if (Subsystem)
+    {
+        Subsystem->AddMappingContext(AuraContext, 0);
+    }
+    
     bShowMouseCursor = true;
     FInputModeGameAndUI InputMode;
 	InputMode.SetHideCursorDuringCapture(false); // We want the cursor to be visible even when the mouse is captured by the viewport, so we set this to false.
@@ -62,7 +64,7 @@ void AAuraPlayerController::CursorTrace() {
     LastActor = ThisActor;
     ThisActor = HitResult.GetActor();
 
-    /* ½«CursorÖ¸ÏòµÄEnemy½øĞĞ¸ßÁÁÏÔÊ¾£¬ÓĞ5ÖÖÇé¿ö
+    /* å°†CursoræŒ‡å‘çš„Enemyè¿›è¡Œé«˜äº®æ˜¾ç¤ºï¼Œæœ‰5ç§æƒ…å†µ
         A.LastActor == null && ThisActor == null
             do nothing
         B.LastActor == null && ThisActor != null

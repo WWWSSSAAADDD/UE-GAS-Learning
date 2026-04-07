@@ -9,11 +9,12 @@
 
 class UAbilitySystemComponent;
 class UAttributeSet;
+
 /**
  * 
  */
 UCLASS()
-class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInterface // 附带AbilitySystemComponent的实现接口以后便于操作Component
+class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInterface // 闄勫甫AbilitySystemComponent鐨勫疄鐜版帴鍙ｄ互鍚庝究浜庢搷浣淐omponent
 {
 	GENERATED_BODY()
 public:
@@ -27,4 +28,5 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const noexcept override;
 	UAttributeSet* GetAttributeSet() const noexcept { return AttributeSet; }
+
 };

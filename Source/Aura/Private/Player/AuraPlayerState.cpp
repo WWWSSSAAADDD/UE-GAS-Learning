@@ -13,10 +13,13 @@ AAuraPlayerState::AAuraPlayerState() {
 
 	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 
-	// 设置给服务器传输数据的频率。每秒检测这个Actor 100次，如果有修改就更新数据
+	// 璁剧疆缁欐湇鍔″櫒浼犺緭鏁版嵁鐨勯鐜囥�傛瘡绉掓娴嬭繖涓狝ctor 100娆★紝濡傛灉鏈変慨鏀瑰氨鏇存柊鏁版嵁
 	NetUpdateFrequency = 100.f;
+
 }
 
 UAbilitySystemComponent* AAuraPlayerState::GetAbilitySystemComponent() const noexcept {
 	return AbilitySystemComponent;
 }
+
+
