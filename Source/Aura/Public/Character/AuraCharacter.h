@@ -23,5 +23,4 @@ public:
 private:
 	void InitAbilityActorInfo();
 
-	void InitAuraHUD();
 };

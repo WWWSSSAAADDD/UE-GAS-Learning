@@ -10,6 +10,7 @@ UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetCont
 	if (!OverlayWidgetController) {
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WCParams);
+		OverlayWidgetController->BindCallbacksToDependencies();
 	}
 	return OverlayWidgetController;
 }
@@ -23,15 +24,18 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 
 	checkf(OverlayWidgetClass, TEXT("未初始化OverlayWidgetClass，请在BP_AuraHUD选择"));
 	checkf(OverlayWidgetControllerClass, TEXT("未初始化OverlayWidgetControllerClass，请在BP_AuraHUD选择")); 
+
 	OverlayWidget = CreateWidget<UAuraUserWidget>(GetWorld(), OverlayWidgetClass);
 
-	const FWidgetControllerParams WCParams(PC, PS, ASC, AS);
-	OverlayWidget->SetWidgetController(GetOverlayWidgetController(WCParams));
+	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 
-	if (OverlayWidget)
-	{
-		OverlayWidget->AddToViewport();
-	}
+	/* Q:为什么不直接给OverlayWidgetController成员变量赋值？ */
+	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
+	OverlayWidget->SetWidgetController(WidgetController);
+
+	WidgetController->BroadcastInitialValues();
+
+	OverlayWidget->AddToViewport();
 
 	
 }
