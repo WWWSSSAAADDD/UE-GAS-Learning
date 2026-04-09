@@ -15,11 +15,12 @@ AAuraEnemy::AAuraEnemy() {
 	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+
 }
 
 void AAuraEnemy::HighlightActor() {
 	GetMesh()->SetRenderCustomDepth(true);
-	GetMesh()->SetCustomDepthStencilValue(CustomDepthRedHighlighted);	// 250¶ÔÓ¦¸ßÁÁ²ÄÖÊ
+	GetMesh()->SetCustomDepthStencilValue(CustomDepthRedHighlighted);	// 250å¯¹åº”é«˜äº®æè´¨
 	Weapon->SetRenderCustomDepth(true);
 	Weapon->SetCustomDepthStencilValue(CustomDepthRedHighlighted);
 }
