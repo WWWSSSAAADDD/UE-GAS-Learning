@@ -39,7 +39,7 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	}
 	if (Attribute == GetMaxManaAttribute())
 	{
-
+		
 	}
 }
 
