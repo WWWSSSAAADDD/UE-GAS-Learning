@@ -6,6 +6,7 @@
 #include "Player/AuraPlayerState.h"
 #include "AbilitySystemComponent.h"
 #include "UI/HUD/AuraHUD.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 AAuraCharacter::AAuraCharacter() {
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -39,11 +40,13 @@ void AAuraCharacter::InitAbilityActorInfo() {
 	check(AuraPlayerState)
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(AuraPlayerState, this);
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 
 	// 多人联机时，非本机玩家的GetController返回nullptr，这种情况我们不想让程序崩溃
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
+		// 服务器GetHUD返回nullptr，此时不执行InitOverlay
 		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PC->GetHUD()))
 		{
 			AuraHUD->InitOverlay(PC, GetPlayerState(), AbilitySystemComponent, AttributeSet);

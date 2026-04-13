@@ -11,7 +11,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 
 UCLASS(Abstract)
-class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface  // ¸½´øAbilitySystemComponentµÄÊµÏÖ½Ó¿ÚÒÔºó±ãÓÚ²Ù×÷Component
+class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface  // é™„å¸¦AbilitySystemComponentçš„å®ç°æ¥å£ä»¥åä¾¿äºæ“ä½œComponent
 {
 	GENERATED_BODY()
 
@@ -27,7 +27,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "Combat") // ËùÓĞ³ÉÔ±Ö¸Õë¶¼ÒªÓĞUPROPERTYºê£¬·ñÔò»á±»À¬»ø»ØÊÕµô
+	UPROPERTY(EditAnywhere, Category = "Combat") // æ‰€æœ‰æˆå‘˜æŒ‡é’ˆéƒ½è¦æœ‰UPROPERTYå®ï¼Œå¦åˆ™ä¼šè¢«åƒåœ¾å›æ”¶æ‰
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 	
 	UPROPERTY()
@@ -36,4 +36,5 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	virtual void InitAbilityActorInfo();
 };

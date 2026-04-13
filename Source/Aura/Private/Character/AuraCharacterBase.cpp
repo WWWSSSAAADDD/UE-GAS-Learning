@@ -11,10 +11,10 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	
-	// FNameÓÃÓÚ°ó¶¨µ½MeshÉÏÃûÎªFNameµÄ²å²ÛSocketÉÏ£¨Ãû×Ö±ØÐëÒ»Ñù£©
+	// FNameç”¨äºŽç»‘å®šåˆ°Meshä¸Šåä¸ºFNameçš„æ’æ§½Socketä¸Šï¼ˆåå­—å¿…é¡»ä¸€æ ·ï¼‰
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	
-	// ¿ÉÒÔÖ»ÔÚ¹¥»÷¶¯×÷·¢ÉúµÄÊ±ºò¿ªÆôÅö×²£¬·ÀÖ¹´íÎóÅö×²ÒÔ¼°¶îÍâÐÔÄÜ¿ªÏú
+	// å¯ä»¥åªåœ¨æ”»å‡»åŠ¨ä½œå‘ç”Ÿçš„æ—¶å€™å¼€å¯ç¢°æ’žï¼Œé˜²æ­¢é”™è¯¯ç¢°æ’žä»¥åŠé¢å¤–æ€§èƒ½å¼€é”€
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -29,3 +29,7 @@ void AAuraCharacterBase::BeginPlay()
 	
 }
 
+void AAuraCharacterBase::InitAbilityActorInfo()
+{
+
+}
