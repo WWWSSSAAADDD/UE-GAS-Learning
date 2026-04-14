@@ -17,9 +17,4 @@ void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* Ability
 
 	GameplayEffectAssetTags.Broadcast(TagContainer);
 
-	for (const FGameplayTag& Tag : TagContainer)
-	{
-		FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Black, Msg);
-	}
 }
