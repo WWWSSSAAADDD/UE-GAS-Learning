@@ -52,4 +52,7 @@ void AAuraCharacter::InitAbilityActorInfo() {
 			AuraHUD->InitOverlay(PC, GetPlayerState(), AbilitySystemComponent, AttributeSet);
 		}
 	}
+
+	/* 初始化Primary、Secondary Attributes */
+	InitDefaultAttributes();
 }
