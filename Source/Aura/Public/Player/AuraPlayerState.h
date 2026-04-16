@@ -29,4 +29,15 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const noexcept override;
 	UAttributeSet* GetAttributeSet() const noexcept { return AttributeSet; }
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	int32 GetPlayerLevel() const;
+
+private:
+
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Level, Category = "Combat")
+	int32 Level = 1;
+
+	UFUNCTION()
+	void OnRep_Level(int32 OldLevel);
 };

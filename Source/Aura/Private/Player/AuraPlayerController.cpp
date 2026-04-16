@@ -39,7 +39,7 @@ void AAuraPlayerController::SetupInputComponent() {
 void AAuraPlayerController::PlayerTick(float DeltaTime) {
     Super::PlayerTick(DeltaTime);
 
-    UE_LOG(LogTemp, Log, TEXT("Here is PlayerTick"));
+    //UE_LOG(LogTemp, Log, TEXT("Here is PlayerTick"));
     CursorTrace();
 }
 
@@ -80,7 +80,7 @@ void AAuraPlayerController::CursorTrace() {
     if (LastActor == nullptr) {
         if (ThisActor == nullptr) {
             // Case A
-            UE_LOG(LogTemp, Log, TEXT("Here is Case A"));
+            //UE_LOG(LogTemp, Log, TEXT("Here is Case A"));
         }
         else {
             // Case B
