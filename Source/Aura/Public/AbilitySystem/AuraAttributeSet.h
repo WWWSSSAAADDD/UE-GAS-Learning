@@ -13,6 +13,8 @@
  	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
  	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+DECLARE_DELEGATE_RetVal(FGameplayAttribute, FTagToAttributeSignature);
+
 USTRUCT()
 struct FEffectProperties {
 	GENERATED_BODY()
@@ -47,6 +49,10 @@ struct FEffectProperties {
 
 };
 
+
+template<typename RetValType>
+using StaticFuncType = typename TBaseStaticDelegateInstance<RetValType(), FDefaultDelegateUserPolicy>::FFuncPtr;
+
 /**
  * 
  */
@@ -55,6 +61,9 @@ class AURA_API UAuraAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 public:
+	using GetAttributeFunc = StaticFuncType<FGameplayAttribute>;
+	TMap<FGameplayTag, GetAttributeFunc> TagsToAttributes;
+
 	UAuraAttributeSet();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
