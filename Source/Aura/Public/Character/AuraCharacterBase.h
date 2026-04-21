@@ -11,6 +11,7 @@
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
+class UGameplayAbility;
 
 UCLASS(Abstract)
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface  // 附带AbilitySystemComponent的实现接口以后便于操作Component
@@ -23,6 +24,9 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const noexcept override;
 	UAttributeSet* GetAttributeSet() const noexcept { return AttributeSet; }
+
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 protected:
 
@@ -52,4 +56,7 @@ protected:
 	void InitDefaultAttributes() const;
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+
+	/* 用于服务器给角色授予初始能力 */
+	void GrantAbilities();
 };

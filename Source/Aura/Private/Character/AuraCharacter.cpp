@@ -25,6 +25,7 @@ void AAuraCharacter::PossessedBy(AController* NewController) {
 	// 初始化Overlay组件
 	InitAbilityActorInfo();
 
+	GrantAbilities();
 }
 
 void AAuraCharacter::OnRep_PlayerState() {
