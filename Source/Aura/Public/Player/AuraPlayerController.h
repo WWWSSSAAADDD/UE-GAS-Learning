@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "GameplayTagContainer.h"
 #include "AuraPlayerController.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
 class IEnemyInterface;
+class UAuraAbilitySystemComponent;
 struct FInputActionValue;
+
 
 /**
  * 
@@ -38,4 +41,21 @@ private:
 
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UAuraInputConfig> InputConfig;
+
+	UPROPERTY()
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+
+	UAuraAbilitySystemComponent* GetAuraASC();
+
+	void OnAbilityInputPressed(FGameplayTag Tag);
+	void OnAbilityInputReleased(FGameplayTag Tag);
+	void OnAbilityInputHeld(FGameplayTag Tag);
+
+
+	bool bTargeting = false;
+	float Folllow = 0.f;
+	FVector CachedLocation = FVector::Zero();
 };

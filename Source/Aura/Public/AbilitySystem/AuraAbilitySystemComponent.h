@@ -22,6 +22,12 @@ public:
 
 	void AddGameplayAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AbilityClasses);
 
+	void OnAbilityInputPressed(FGameplayTag InputTag);
+	void OnAbilityInputReleased(FGameplayTag InputTag);
+	void OnAbilityInputHeld(FGameplayTag InputTag);
+
 protected:
 	void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
+
+private:
 };

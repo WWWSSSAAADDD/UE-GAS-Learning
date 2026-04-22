@@ -4,8 +4,11 @@
 #include "Player/AuraPlayerController.h"
 
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
+#include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 
 AAuraPlayerController::AAuraPlayerController() {
     bReplicates = true;
@@ -32,8 +35,10 @@ void AAuraPlayerController::BeginPlay() {
 void AAuraPlayerController::SetupInputComponent() {
     Super::SetupInputComponent();
 
-    UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+    UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
+	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+
+    AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::OnAbilityInputPressed, &ThisClass::OnAbilityInputReleased, &ThisClass::OnAbilityInputHeld);
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime) {
@@ -101,5 +106,80 @@ void AAuraPlayerController::CursorTrace() {
                 ThisActor->HighlightActor();
             }
         }
+    }
+}
+
+UAuraAbilitySystemComponent* AAuraPlayerController::GetAuraASC()
+{
+    if (AuraAbilitySystemComponent == nullptr)
+    {
+        AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(
+            UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+    }
+    return AuraAbilitySystemComponent;
+}
+
+void AAuraPlayerController::OnAbilityInputPressed(FGameplayTag Tag)
+{
+
+    bTargeting = ThisActor ? true : false;
+    Folllow = 0.f;
+
+    // Do Something To Cast AuraASC
+    if (GetAuraASC() == nullptr)
+    {
+        return;
+    }
+    GetAuraASC()->OnAbilityInputPressed(Tag);
+    
+}
+
+void AAuraPlayerController::OnAbilityInputReleased(FGameplayTag Tag)
+{
+    
+    if (GetAuraASC() == nullptr)
+    {
+        return;
+    }
+    GetAuraASC()->OnAbilityInputReleased(Tag);
+}
+
+void AAuraPlayerController::OnAbilityInputHeld(FGameplayTag Tag)
+{
+    // Input Tag不是Input.LMB时
+    if (!FGameplayTags::Get().InputTag_LMB.MatchesTagExact(Tag))
+    {
+        if (GetAuraASC())
+        {
+            GetAuraASC()->OnAbilityInputHeld(Tag);
+        }
+        return;
+    }
+
+    // Input Tag是Input.LMB时
+    // 如果指向目标，释放技能；否则进行移动
+    if (bTargeting)
+    {
+        if (GetAuraASC())
+        {
+            GetAuraASC()->OnAbilityInputHeld(Tag);
+        }
+        return;
+    }
+    else
+    {
+        Folllow += GetWorld()->GetDeltaSeconds();
+        FHitResult Hit;
+        if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+        {
+            CachedLocation = Hit.ImpactPoint;
+
+            if (APawn* ControlledPawn = GetPawn())
+            {
+                FVector WorldDirection = (CachedLocation - ControlledPawn->GetActorLocation()).GetSafeNormal();
+                ControlledPawn->AddMovementInput(WorldDirection);
+            }
+        }
+        
     }
 }

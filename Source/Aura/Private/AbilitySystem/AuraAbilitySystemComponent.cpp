@@ -16,10 +16,58 @@ void UAuraAbilitySystemComponent::AddGameplayAbilities(const TArray<TSubclassOf<
 {
 	for (const TSubclassOf<UGameplayAbility>& AbilityClass : AbilityClasses)
 	{
-		UAuraGameplayAbility* AuraAbilityClass = CastChecked<UAuraGameplayAbility>(AbilityClass);
-		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AuraAbilityClass, 1);
-		GiveAbilityAndActivateOnce(AbilitySpec);
+		check(AbilityClass);
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		
+		if (UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec.Ability))
+		{
+			AbilitySpec.DynamicAbilityTags.AddTag(AuraAbility->StartupTag);
+			GiveAbility(AbilitySpec);
+		}
 	}
+}
+
+void UAuraAbilitySystemComponent::OnAbilityInputPressed(FGameplayTag InputTag)
+{
+
+}
+
+void UAuraAbilitySystemComponent::OnAbilityInputReleased(FGameplayTag InputTag)
+{
+	if (!InputTag.IsValid())
+	{
+		return;
+	}
+
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
+		{
+			AbilitySpecInputReleased(AbilitySpec);
+		}
+	}
+}
+
+
+void UAuraAbilitySystemComponent::OnAbilityInputHeld(FGameplayTag InputTag)
+{
+	if (!InputTag.IsValid())
+	{
+		return;
+	}
+
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
+		{
+			AbilitySpecInputPressed(AbilitySpec);
+			if (!AbilitySpec.IsActive())
+			{
+				TryActivateAbility(AbilitySpec.Handle);
+			}
+		}
+	}
+
 }
 
 void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
