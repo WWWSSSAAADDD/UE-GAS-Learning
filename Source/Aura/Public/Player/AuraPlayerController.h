@@ -11,6 +11,7 @@ class UInputMappingContext;
 class UInputAction;
 class IEnemyInterface;
 class UAuraAbilitySystemComponent;
+class USplineComponent;
 struct FInputActionValue;
 
 
@@ -38,6 +39,7 @@ private:
 	void Move(const FInputActionValue& Value);
 
 	void CursorTrace();
+	FHitResult CursorHit;
 
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
@@ -56,6 +58,19 @@ private:
 
 
 	bool bTargeting = false;
-	float Folllow = 0.f;
-	FVector CachedLocation = FVector::Zero();
+	bool bAutoRunning = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptRadius = 100.f;
+	float FollowTime = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Move")
+	float ShortThreshold = 0.5;
+	
+	FVector CachedDestination = FVector::Zero();
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USplineComponent> NavSpline;
+
+	void AutoRun();
 };

@@ -28,6 +28,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
+	virtual FVector GetWeaponTipLocation() override;
+
 protected:
 
 	// Called when the game starts or when spawned
@@ -36,6 +38,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat") // 所有成员指针都要有UPROPERTY宏，否则会被垃圾回收掉
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 	
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName WeaponTipSocketName;
+
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
