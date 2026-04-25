@@ -12,14 +12,15 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 }
 
-void UAuraProjectileSpell::SpawnProjectile()
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 	if (!GetAvatarActorFromActorInfo()->HasAuthority()) return;
 
 	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
 		FTransform Transform;
-		Transform.SetLocation(CombatInterface->GetWeaponTipLocation());
+		FVector WeaponTipLocation = CombatInterface->GetWeaponTipLocation();
+		Transform.SetLocation(WeaponTipLocation);
 
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 			ProjectileClass,
@@ -28,6 +29,10 @@ void UAuraProjectileSpell::SpawnProjectile()
 			Cast<APawn>(GetOwningActorFromActorInfo()),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
+		FRotator Rotation = (ProjectileTargetLocation - WeaponTipLocation).Rotation();
+		Rotation.Pitch = 0.f;
+		Projectile->SetActorRotation(Rotation.Quaternion());
+		
 		// TODO:给Projectile添加GE，将GE施加给Overlap的Pawn
 
 		Projectile->FinishSpawning(Transform);

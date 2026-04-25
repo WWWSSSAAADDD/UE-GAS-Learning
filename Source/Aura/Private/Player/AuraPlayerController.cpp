@@ -41,6 +41,8 @@ void AAuraPlayerController::SetupInputComponent() {
 
     UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+    AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::OnShiftPressed);
+    AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::OnShiftReleased);
     AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::OnAbilityInputPressed, &ThisClass::OnAbilityInputReleased, &ThisClass::OnAbilityInputHeld);
 }
 
@@ -132,19 +134,15 @@ void AAuraPlayerController::OnAbilityInputReleased(FGameplayTag Tag)
     }
 
     // 如果Tag是Input_LMB
-    // 如果指向目标
-    if (bTargeting)
-    {
-        if (GetAuraASC() == nullptr) return;
-        GetAuraASC()->OnAbilityInputReleased(Tag);
-    }
-    // 如果没有指向目标
-    else
+    // 先告知ASC鼠标左键Released了
+    if (GetAuraASC()) GetAuraASC()->OnAbilityInputReleased(Tag);
+
+    // 如果没有指向目标 && 没有按住Shift，则进行移动
+    if (!bTargeting && !bShiftDown)
     {
         APawn* ControlledPawn = GetPawn();
         if (ControlledPawn && FollowTime <= ShortThreshold)
         {
-            
             if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination, ControlledPawn))
             {
                 if (!NavPath->PathPoints.IsEmpty())
@@ -163,7 +161,7 @@ void AAuraPlayerController::OnAbilityInputReleased(FGameplayTag Tag)
         }
         FollowTime = 0.f;
         bTargeting = false;
-    }
+    } 
 }
 
 void AAuraPlayerController::OnAbilityInputHeld(FGameplayTag Tag)
@@ -176,8 +174,10 @@ void AAuraPlayerController::OnAbilityInputHeld(FGameplayTag Tag)
     }
 
     // Input Tag是Input.LMB时
-    // 如果指向目标，释放技能；否则进行移动
-    if (bTargeting)
+    // 如果指向目标，释放技能；
+    // 如果按住Shift，释放技能
+    // 否则进行移动
+    if (bTargeting || bShiftDown)
     {
         if (GetAuraASC()) GetAuraASC()->OnAbilityInputHeld(Tag);
         return;

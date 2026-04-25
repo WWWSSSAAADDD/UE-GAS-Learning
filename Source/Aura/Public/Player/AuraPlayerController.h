@@ -35,9 +35,17 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
-
+	
 	void Move(const FInputActionValue& Value);
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction;
+
+	bool bShiftDown = false;
+
+	void OnShiftPressed() { bShiftDown = true; }
+	void OnShiftReleased() { bShiftDown = false; }
+	
 	void CursorTrace();
 	FHitResult CursorHit;
 
@@ -61,7 +69,7 @@ private:
 	bool bAutoRunning = false;
 
 	UPROPERTY(EditDefaultsOnly)
-	float AutoRunAcceptRadius = 100.f;
+	float AutoRunAcceptRadius = 50.f;
 	float FollowTime = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Move")
