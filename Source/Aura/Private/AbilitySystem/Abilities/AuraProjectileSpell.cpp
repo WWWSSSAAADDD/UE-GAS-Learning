@@ -7,7 +7,14 @@
 
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+}
+
+void UAuraProjectileSpell::SpawnProjectile()
+{
+	if (!GetAvatarActorFromActorInfo()->HasAuthority()) return;
 
 	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
@@ -15,18 +22,14 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		Transform.SetLocation(CombatInterface->GetWeaponTipLocation());
 
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
-			ProjectileClass, 
+			ProjectileClass,
 			Transform,
-			GetOwningActorFromActorInfo(), 
-			Cast<APawn>(GetOwningActorFromActorInfo()), 
+			GetOwningActorFromActorInfo(),
+			Cast<APawn>(GetOwningActorFromActorInfo()),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		// TODO:给Projectile添加GE，将GE施加给Overlap的Pawn
 
 		Projectile->FinishSpawning(Transform);
 	}
-
-
-
-
 }
