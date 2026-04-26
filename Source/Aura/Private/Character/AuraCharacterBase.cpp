@@ -5,20 +5,24 @@
 #include "GameplayEffect.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Aura/Aura.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
-	
 	// FName用于绑定到Mesh上名为FName的插槽Socket上（名字必须一样）
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
-	
 	// 可以只在攻击动作发生的时候开启碰撞，防止错误碰撞以及额外性能开销
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const noexcept {
@@ -30,6 +34,7 @@ FVector AAuraCharacterBase::GetWeaponTipLocation()
 	check(Weapon);
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
+
 
 // Called when the game starts or when spawned
 void AAuraCharacterBase::BeginPlay()

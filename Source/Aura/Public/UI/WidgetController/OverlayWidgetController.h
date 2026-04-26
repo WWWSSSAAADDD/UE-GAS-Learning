@@ -58,6 +58,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangedSignature OnMaxManaChanged;
 
+	// 当GE对Aura主角ASC生效以后会被触发，这个委托用于WidgetController拿到FUIWidgetRow广播给OverlayWidget，进而能生成MessageWidget
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Message")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
 
@@ -65,12 +66,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 
-	template<typename T>
-	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
+	template<typename RowType>
+	RowType* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 };
 
-template<typename T>
-inline T* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
+template<typename RowType>
+inline RowType* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
 {
-	return DataTable->FindRow<T>(Tag.GetTagName(), TEXT(""));
+	return DataTable->FindRow<RowType>(Tag.GetTagName(), TEXT(""));
 }

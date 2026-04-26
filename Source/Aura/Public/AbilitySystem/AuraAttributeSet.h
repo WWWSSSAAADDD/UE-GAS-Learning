@@ -68,8 +68,10 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	//修改属性前会调用的函数，用于Clamp和预处理
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
+	//GE生效后会调用的函数，处理最终结果
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	/* Primary Attributes */
@@ -201,5 +203,6 @@ public:
 
 
 private:
+	// 把重要数据从Data里提取到Props里，更方便使用
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };

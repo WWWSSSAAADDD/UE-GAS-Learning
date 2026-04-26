@@ -89,8 +89,6 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 {
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Health from GetHealth: %f"), GetHealth());
-		UE_LOG(LogTemp, Warning, TEXT("Magnitude: %f"), Data.EvaluatedData.Magnitude);
 	}
 
 	Props.EffectContextHandle = Data.EffectSpec.GetContext();
@@ -134,6 +132,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+		UE_LOG(LogTemp, Warning, TEXT("SourAvatar: %s"), *Props.SourceAvatarActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("TargetAvatar: %s"), *Props.TargetAvatarActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Health from Actor Applied GE: %f"), GetHealth());
+		UE_LOG(LogTemp, Warning, TEXT("Magnitude: %f"), Data.EvaluatedData.Magnitude);
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{

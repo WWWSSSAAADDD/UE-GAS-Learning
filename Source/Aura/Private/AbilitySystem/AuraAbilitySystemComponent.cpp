@@ -76,6 +76,7 @@ void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySys
 	FGameplayTagContainer TagContainer;
 	GameplayEffectSpec.GetAllAssetTags(TagContainer);
 
-	GameplayEffectAssetTags.Broadcast(TagContainer);
+	// 广播GE的AssetTags，可用于确认是否有MessageTag来让WidgetController转发UIWidgetRow来创建MessageWidget
+	GameplayEffectAssetTagsDelegate.Broadcast(TagContainer);
 
 }

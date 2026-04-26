@@ -53,8 +53,8 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			}
 		);
 
-
-	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->GameplayEffectAssetTags.AddLambda(
+	// 接受GE AssetTags广播以后，如果是MessageTag，则给MessageWidgetRowDelegate广播
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->GameplayEffectAssetTagsDelegate.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
 		{
 			for (const FGameplayTag& MessageTag : AssetTags)
