@@ -147,6 +147,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
 	
 	/* Meta Attribtues */
+	// 只有服务器能访问
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
 	FGameplayAttributeData InComingDamage;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, InComingDamage);
@@ -209,4 +210,7 @@ public:
 private:
 	// 把重要数据从Data里提取到Props里，更方便使用
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
+
+	// 调用PlayerController显示伤害UI
+	void ShowFloatingText(const FEffectProperties& Props, float DamageValue);
 };

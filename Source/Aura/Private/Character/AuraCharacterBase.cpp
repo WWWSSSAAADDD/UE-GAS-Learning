@@ -40,6 +40,43 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation() const
 	return HitReactMontage;
 }
 
+void AAuraCharacterBase::Died()
+{
+	Weapon->DetachFromComponent(FDetachmentTransformRules(FAttachmentTransformRules::KeepWorldTransform, true));
+	MulticastHandleDeath();
+}
+
+void AAuraCharacterBase::Dissolve()
+{
+	if (DissolveMaterialInstance)
+	{
+		UMaterialInstanceDynamic* DynamicInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		GetMesh()->SetMaterial(0, DynamicInstance);
+		StartDissolveTimeline(DynamicInstance);
+	}
+	if (WeaponDissolveMaterialInstance)
+	{
+		UMaterialInstanceDynamic* WeaponDynamicInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		Weapon->SetMaterial(0, WeaponDynamicInstance);
+		WeaponStartDissolveTimeline(WeaponDynamicInstance);
+	}
+}
+
+void AAuraCharacterBase::MulticastHandleDeath_Implementation()
+{
+	Weapon->SetSimulatePhysics(true);
+	Weapon->SetEnableGravity(true);
+	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Dissolve();
+}
+
 
 // Called when the game starts or when spawned
 void AAuraCharacterBase::BeginPlay()

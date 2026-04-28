@@ -7,8 +7,10 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "UObject/CoreNetTypes.h"
-#include <Net\UnrealNetwork.h>
+#include "Net\UnrealNetwork.h"
 #include "AuraGameplayTags.h"
+#include "Interaction/CombatInterface.h"
+#include "Player/AuraPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet() {
 	InitHealth(100.f);
@@ -151,15 +153,36 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			SetHealth(FMath::Clamp(NewHealth, 0, GetMaxHealth()));
 			const bool bFatal = NewHealth <= 0.f;
 		
-			if (!bFatal)
+			if (bFatal)
+			{
+				if (ICombatInterface* Interface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+				{
+					Interface->Died();
+				}
+			}
+			else
 			{
 				FGameplayTagContainer TagContainer;
 				TagContainer.AddTag(FGameplayTags::Get().Effects_HitReact);
 				Props.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
 			}
 		}
+		ShowFloatingText(Props, DamageValue);
 	}
 }
+
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float DamageValue)
+{
+	if (Props.TargetAvatarActor != Props.SourceAvatarActor)
+		{
+			if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceController))
+			{
+				PC->ShowDamageText(DamageValue, Props.TargetAvatarActor);
+			}
+		}
+}
+
 
 void UAuraAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
 {

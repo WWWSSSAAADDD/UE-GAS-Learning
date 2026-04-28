@@ -12,6 +12,7 @@
 #include "Components/SplineComponent.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
+#include "UI/Widget/DamageTextComponent.h"
 
 AAuraPlayerController::AAuraPlayerController() {
     bReplicates = true;
@@ -72,6 +73,20 @@ void AAuraPlayerController::AutoRun()
         }
 
     }
+}
+
+void AAuraPlayerController::ShowDamageText_Implementation(float DamageValue, AActor* Target)
+{
+    check(DamageTextComponentClass);
+    if (IsValid(Target))
+    {
+        UDamageTextComponent* DamageTextComponent = NewObject<UDamageTextComponent>(Target, DamageTextComponentClass);
+        DamageTextComponent->RegisterComponent();
+        DamageTextComponent->AttachToComponent(Target->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+        DamageTextComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+        DamageTextComponent->SetDamageText(DamageValue);
+    }
+  
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& Value) {

@@ -38,4 +38,6 @@ public:
 	// 蓝图可能会使用C++的重载
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	UAnimMontage* GetHitReactMontage() const;
+
+	virtual void Died() = 0;
 };

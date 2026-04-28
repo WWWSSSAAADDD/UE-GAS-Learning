@@ -40,6 +40,12 @@ int32 AAuraEnemy::GetPlayerLevel()
 	return Level;
 }
 
+void AAuraEnemy::Died()
+{
+	SetLifeSpan(LifeSpan);
+	Super::Died();
+}
+
 void AAuraEnemy::BeginPlay() {
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
