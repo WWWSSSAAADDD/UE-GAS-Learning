@@ -31,7 +31,7 @@ struct FCharacterClassDefaultInfo
 
 
 UCLASS()
-class AURA_API UCharacterClassInfoize : public UDataAsset
+class AURA_API UCharacterClassInfo : public UDataAsset
 {
 	GENERATED_BODY()
 	

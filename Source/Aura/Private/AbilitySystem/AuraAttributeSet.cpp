@@ -129,7 +129,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
-	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	if (Data.EvaluatedData.Attribute == GetInComingDamageAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 		UE_LOG(LogTemp, Warning, TEXT("SourAvatar: %s"), *Props.SourceAvatarActor->GetName());
@@ -140,6 +140,17 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+	}
+	if (Data.EvaluatedData.Attribute == GetInComingDamageAttribute())
+	{
+		const float DamageValue = GetInComingDamage();
+		SetInComingDamage(0.f);
+		if (DamageValue > 0.f)
+		{
+			float NewHealth = GetHealth() - DamageValue;
+			SetHealth(FMath::Clamp(NewHealth, 0, GetMaxHealth()));
+			const bool bFatal = NewHealth <= 0.f;
+		}
 	}
 }
 

@@ -37,6 +37,13 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangedSignature OnMaxHealthChanged;
 
+	void OnHitReactChanged(const FGameplayTag Tag, int32 NewCount);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bHitReacting = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 250.f;
 protected:
 	virtual void BeginPlay() override;
 	
@@ -52,5 +59,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 	TObjectPtr<UWidgetComponent> HealthBar;
+
+
 private:
 };

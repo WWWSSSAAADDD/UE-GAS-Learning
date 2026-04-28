@@ -37,4 +37,10 @@ void FGameplayTags::InitializeNativeGameplayTags()
 	Get().InputTag_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.3"), FString("key3"));
 	Get().InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.4"), FString("key4"));
 
+	/* Abilities Tags */
+	Get().Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"), FString("伤害"));
+
+	/* Effects Tags */
+	Get().Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"), FString("受击反应"));
+
 }

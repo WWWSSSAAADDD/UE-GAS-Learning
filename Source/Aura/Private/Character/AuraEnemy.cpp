@@ -8,6 +8,8 @@
 #include "Components/WidgetComponent.h"
 #include "UI/Widget/AuraUserWidget.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "AuraGameplayTags.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AAuraEnemy::AAuraEnemy() {
 	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
@@ -40,6 +42,7 @@ int32 AAuraEnemy::GetPlayerLevel()
 
 void AAuraEnemy::BeginPlay() {
 	Super::BeginPlay();
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
 
 	// 设置HealthBar的WidgetController，这会触发HealthBar的WidgetControllerSet事件
@@ -65,11 +68,22 @@ void AAuraEnemy::BeginPlay() {
 			}
 		);
 
+		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTags::Get().Effects_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this,
+			&AAuraEnemy::OnHitReactChanged
+		);
+
 		// 广播初始值，对应OverlayWidgetController的BroadcastInitialValue
 		OnHealthChanged.Broadcast(AuraAS->GetHealth());
 		OnMaxHealthChanged.Broadcast(AuraAS->GetMaxHealth());
 	}
 
+}
+
+void AAuraEnemy::OnHitReactChanged(const FGameplayTag Tag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
 }
 
 void AAuraEnemy::InitAbilityActorInfo()
@@ -84,3 +98,5 @@ void AAuraEnemy::InitDefaultAttributes() const
 {
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
+
+

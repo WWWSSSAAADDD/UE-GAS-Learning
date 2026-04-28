@@ -19,7 +19,7 @@ public:
 	// 当ASC的ActorInfo设置好以后，被调用。目前用于绑定ASC的回调函数
 	void AbilityActorInfoSet();
 
-	//  用于广播GE的AssetTags，
+	//  广播GE的AssetTags，
 	FGameplayEffectAssetTagsSignature GameplayEffectAssetTagsDelegate;
 
 	void AddGameplayAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AbilityClasses);

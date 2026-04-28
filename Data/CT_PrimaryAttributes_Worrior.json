@@ -1,6 +1,6 @@
 [
 	{
-		"Name": "Strength",
+		"Name": "Attributes.Primary.Strength",
 		"1": 2.5,
 		"2": 5,
 		"3": 8.5,
@@ -13,7 +13,7 @@
 		"10": 120
 	},
 	{
-		"Name": "Intelligence",
+		"Name": "Attributes.Primary.Intelligence",
 		"1": 2.5,
 		"2": 5,
 		"3": 8.5,
@@ -26,7 +26,7 @@
 		"10": 120
 	},
 	{
-		"Name": "Vigor",
+		"Name": "Attributes.Primary.Vigor",
 		"1": 2.5,
 		"2": 5,
 		"3": 8.5,
@@ -39,7 +39,7 @@
 		"10": 120
 	},
 	{
-		"Name": "Resilience",
+		"Name": "Attributes.Primary.Resilience",
 		"1": 5,
 		"2": 7.5,
 		"3": 10,

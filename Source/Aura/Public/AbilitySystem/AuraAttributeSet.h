@@ -146,6 +146,10 @@ public:
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
 	
+	/* Meta Attribtues */
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData InComingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, InComingDamage);
 
 	/* Primary Attributes' Replication Notify Function */
 	UFUNCTION()
