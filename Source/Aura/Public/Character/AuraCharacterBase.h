@@ -58,10 +58,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
-	void InitDefaultAttributes() const;
-
-	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+	virtual void InitDefaultAttributes() const;
 
 	/* 用于服务器给角色授予初始能力 */
 	void GrantAbilities();
+
+private:
+	// 初始化Attributes的辅助函数
+	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 };
