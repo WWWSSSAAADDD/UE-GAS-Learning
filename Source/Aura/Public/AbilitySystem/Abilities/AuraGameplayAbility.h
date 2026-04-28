@@ -20,7 +20,7 @@ class AURA_API UAuraGameplayAbility : public UGameplayAbility
 public:
 	// Ability的初始Tag
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	FGameplayTag StartupTag;
+	FGameplayTag StartInputTag;
 
 	// 记录Ability的伤害
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")

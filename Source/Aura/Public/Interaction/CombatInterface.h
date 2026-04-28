@@ -31,4 +31,11 @@ public:
 	// 使用时必须确保已经实现了
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void UpdateFacingTarget(const FVector& TargetLocation);
+
+	// BlueprintNativeEvenet：因为希望能在C++和蓝图都能重载该函数
+	// 如果只有BlueprintCallable，没办法virtual重载
+	// 如果有BlueprintNativeEvenet，会生成FunctionName_Implementation用于C++重载。
+	// 蓝图可能会使用C++的重载
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UAnimMontage* GetHitReactMontage() const;
 };

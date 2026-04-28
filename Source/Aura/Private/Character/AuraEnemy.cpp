@@ -44,6 +44,8 @@ void AAuraEnemy::BeginPlay() {
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
+	// 初始化Enemy的Ability
+	UAuraAbilitySystemLibrary::InitializeDefaultAbilities(this, AbilitySystemComponent);
 
 	// 设置HealthBar的WidgetController，这会触发HealthBar的WidgetControllerSet事件
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetWidget()))

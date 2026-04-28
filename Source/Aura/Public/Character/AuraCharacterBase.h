@@ -30,6 +30,8 @@ public:
 
 	virtual FVector GetWeaponTipLocation() override;
 
+	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
+
 protected:
 
 	// Called when the game starts or when spawned
@@ -66,4 +68,7 @@ protected:
 private:
 	// 初始化Attributes的辅助函数
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	UAnimMontage* HitReactMontage;
 };
