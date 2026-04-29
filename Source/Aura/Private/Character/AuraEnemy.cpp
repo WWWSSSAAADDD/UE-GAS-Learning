@@ -50,8 +50,12 @@ void AAuraEnemy::BeginPlay() {
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
-	// 初始化Enemy的Ability
-	UAuraAbilitySystemLibrary::InitializeDefaultAbilities(this, AbilitySystemComponent);
+
+	if (HasAuthority())
+	{
+		// 初始化Enemy的Ability
+		UAuraAbilitySystemLibrary::InitializeDefaultAbilities(this, AbilitySystemComponent);
+	}
 
 	// 设置HealthBar的WidgetController，这会触发HealthBar的WidgetControllerSet事件
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetWidget()))
@@ -76,7 +80,7 @@ void AAuraEnemy::BeginPlay() {
 			}
 		);
 
-		AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTags::Get().Effects_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(
+		AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Effects_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(
 			this,
 			&AAuraEnemy::OnHitReactChanged
 		);
@@ -104,6 +108,7 @@ void AAuraEnemy::InitAbilityActorInfo()
 
 void AAuraEnemy::InitDefaultAttributes() const
 {
+	if (!HasAuthority()) return;
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
 

@@ -31,4 +31,6 @@ public:
 	// 用于给AI敌人初始化Ability，例如GA_HitReact
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|Abilities")
 	static void InitializeDefaultAbilities(const UObject* WorldContext, UAbilitySystemComponent* ASC);
+
+	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContext);
 };

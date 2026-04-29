@@ -10,7 +10,7 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 	// 绑定用于创建MessageWidget的回调函数
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::ClientEffectApplied);
 
-	FGameplayTags::Get().Attribute_Secondary_Armor.ToString();
+	FAuraGameplayTags::Get().Attribute_Secondary_Armor.ToString();
 }
 
 void UAuraAbilitySystemComponent::AddGameplayAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AbilityClasses)

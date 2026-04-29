@@ -142,7 +142,7 @@ void AAuraPlayerController::OnAbilityInputPressed(FGameplayTag Tag)
 void AAuraPlayerController::OnAbilityInputReleased(FGameplayTag Tag)
 {
     // 如果Tag不是Input_LMB
-    if (!FGameplayTags::Get().InputTag_LMB.MatchesTagExact(Tag))
+    if (!FAuraGameplayTags::Get().InputTag_LMB.MatchesTagExact(Tag))
     {
         if (GetAuraASC() == nullptr) return;
         GetAuraASC()->OnAbilityInputPressed(Tag);
@@ -182,7 +182,7 @@ void AAuraPlayerController::OnAbilityInputReleased(FGameplayTag Tag)
 void AAuraPlayerController::OnAbilityInputHeld(FGameplayTag Tag)
 {
     // Input Tag不是Input.LMB时
-    if (!FGameplayTags::Get().InputTag_LMB.MatchesTagExact(Tag))
+    if (!FAuraGameplayTags::Get().InputTag_LMB.MatchesTagExact(Tag))
     {
         if (GetAuraASC()) GetAuraASC()->OnAbilityInputHeld(Tag);
         return;

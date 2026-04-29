@@ -10,10 +10,10 @@
  * 
  * Singleton containing Native Gameplay Tags
  */
-struct FGameplayTags
+struct FAuraGameplayTags
 {
 public:
-	static FGameplayTags& Get() { static FGameplayTags singleton; return singleton; }
+	static FAuraGameplayTags& Get() { static FAuraGameplayTags singleton; return singleton; }
 	static void InitializeNativeGameplayTags();
 
 	FGameplayTag Attribute_Vital_Health;

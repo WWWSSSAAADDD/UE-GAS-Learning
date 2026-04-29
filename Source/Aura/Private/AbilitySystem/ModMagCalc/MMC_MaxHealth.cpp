@@ -26,12 +26,15 @@ float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffec
 	EvalueationParameters.SourceTags = SourceTags;
 	EvalueationParameters.TargetTags = TargetTags;
 
+	// 捕获Attribute Value
 	float Vigor = 0.f;
 	GetCapturedAttributeMagnitude(VigorDef, Spec, EvalueationParameters, Vigor);
 	Vigor = FMath::Max<float>(0.f, Vigor);
 
+	// 捕获Level
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
 	const int32 Level = CombatInterface->GetPlayerLevel();
 
+	// 最终计算公式
 	return 80.f + 2.5 * Vigor + 10 * Level;
 }

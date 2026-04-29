@@ -5,7 +5,7 @@
 #include "GameplayTagsManager.h"
 
 
-void FGameplayTags::InitializeNativeGameplayTags()
+void FAuraGameplayTags::InitializeNativeGameplayTags()
 {
 	/* Vital Attribute */
 	Get().Attribute_Vital_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Vital.Health"), FString("生命值"));

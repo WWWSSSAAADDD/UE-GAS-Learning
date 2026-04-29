@@ -113,6 +113,7 @@ void AAuraCharacterBase::GrantAbilities()
 
 void AAuraCharacterBase::InitDefaultAttributes() const
 {
+	if (!HasAuthority()) return;
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
