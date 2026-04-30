@@ -5,12 +5,13 @@
 #include "AttributeSet.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
-#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "UObject/CoreNetTypes.h"
 #include "Net\UnrealNetwork.h"
 #include "AuraGameplayTags.h"
 #include "Interaction/CombatInterface.h"
 #include "Player/AuraPlayerController.h"
+#include "AuraAbilityTypes.h"
 
 UAuraAttributeSet::UAuraAttributeSet() {
 	InitHealth(100.f);
@@ -131,6 +132,13 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
+	TArray<TWeakObjectPtr<AActor>> Actors;
+	Actors.Add(Props.SourceAvatarActor);
+	Props.EffectContextHandle.AddActors(Actors);
+	FHitResult Hit = FHitResult();
+	Hit.Location = Props.SourceAvatarActor->GetActorLocation();
+	Props.EffectContextHandle.AddHitResult(Hit);
+
 	if (Data.EvaluatedData.Attribute == GetInComingDamageAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
@@ -167,18 +175,21 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				Props.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
 			}
 		}
-		ShowFloatingText(Props, DamageValue);
+
+		const bool bIsBlocked = UAuraAbilitySystemLibrary::IsBlocked(Props.EffectContextHandle);
+		const bool bIsCritical = UAuraAbilitySystemLibrary::IsCritical(Props.EffectContextHandle);
+		ShowFloatingText(Props, DamageValue, bIsBlocked, bIsCritical);
 	}
 }
 
 
-void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float DamageValue)
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float DamageValue, bool bIsBlocked, bool bIsCritical)
 {
 	if (Props.TargetAvatarActor != Props.SourceAvatarActor)
 		{
 			if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceController))
 			{
-				PC->ShowDamageText(DamageValue, Props.TargetAvatarActor);
+				PC->ShowDamageText(DamageValue, Props.TargetAvatarActor, bIsBlocked, bIsCritical);
 			}
 		}
 }

@@ -1,4 +1,4 @@
-// Copyright 
+ // Copyright 
 
 
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
@@ -7,23 +7,24 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
+#include "AuraAbilityTypes.h"
 
 struct AuraDamageStatics
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(InComingDamage);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage);
 	AuraDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, Armor, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, InComingDamage, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, BlockChance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArmorPenetration, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitChance, Source, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitResistance, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitDamage, Source, false);
 	}
 };
 
@@ -37,11 +38,11 @@ static AuraDamageStatics& DamageStatics()
 UExecCalc_Damage::UExecCalc_Damage()
 {
 	RelevantAttributesToCapture.Add(DamageStatics().ArmorDef);
-	RelevantAttributesToCapture.Add(DamageStatics().InComingDamageDef);
 	RelevantAttributesToCapture.Add(DamageStatics().BlockChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -53,6 +54,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 
 	FGameplayEffectSpec EffectSpec = ExecutionParams.GetOwningSpec();
+	FAuraGameplayEffectContext* EffectContext = static_cast<FAuraGameplayEffectContext*>(EffectSpec.GetContext().Get());
 
 	FAggregatorEvaluateParameters Params = FAggregatorEvaluateParameters();
 	Params.SourceTags = EffectSpec.CapturedSourceTags.GetAggregatedTags();
@@ -64,17 +66,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// 捕获SetByCaller的Damge标签的值
 	float DamageFromSetByCaller = EffectSpec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
-
-	// Block逻辑
-	float TargetBlockChance = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, Params, TargetBlockChance);
-	TargetBlockChance = FMath::Max<float>(TargetBlockChance, 0.f);
-
-	if (TargetBlockChance > FMath::FRandRange(0.f, 1.f))
-	{
-		DamageFromSetByCaller /= 2;
-	}
-
+	
 	float TargetArmor = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, Params, TargetArmor);
 	TargetArmor = FMath::Max<float>(0.f, TargetArmor);
@@ -90,6 +82,21 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	float TargetCriticalHitResistance = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitResistanceDef, Params, TargetCriticalHitResistance);
 	TargetCriticalHitResistance = FMath::Max<float>(0.f, TargetCriticalHitResistance);
+
+	float SourceCriticalHitDamage = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitDamageDef, Params, SourceCriticalHitDamage);
+	SourceCriticalHitDamage = FMath::Max<float>(0.f, SourceCriticalHitDamage);
+
+	float TargetBlockChance = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, Params, TargetBlockChance);
+	TargetBlockChance = FMath::Max<float>(TargetBlockChance, 0.f);
+	
+	// 格挡
+	if (TargetBlockChance > FMath::FRandRange(0.f, 1.f))
+	{
+		DamageFromSetByCaller /= 2;
+		EffectContext->SetIsBlocked(true);
+	}
 
 	// 护甲穿透
 	FRealCurve* ArmorPenetrationRow = CharacterClassInfo->DamageCoefficients->FindCurve(FName("ArmorPenetrationCoefficient"), FString());
@@ -108,10 +115,11 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	if (EffectiveCriticalHitChance > FMath::FRandRange(0.f, 1.f))
 	{
-		DamageFromSetByCaller *= 2;
+		DamageFromSetByCaller = DamageFromSetByCaller * 2 + SourceCriticalHitDamage;
+		EffectContext->SetIsCritical(true);
 	}
 
 	// ExecCalc通过添加Modifier，来给Target施加InComingDamage
-	FGameplayModifierEvaluatedData InComingDamageMod = FGameplayModifierEvaluatedData(DamageStatics().InComingDamageProperty, EGameplayModOp::Additive, DamageFromSetByCaller);
+	FGameplayModifierEvaluatedData InComingDamageMod = FGameplayModifierEvaluatedData(UAuraAttributeSet::GetInComingDamageAttribute(), EGameplayModOp::Additive, DamageFromSetByCaller);
 	OutExecutionOutput.AddOutputModifier(InComingDamageMod);
 }

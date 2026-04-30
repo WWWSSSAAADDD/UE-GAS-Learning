@@ -46,22 +46,6 @@ void AAuraCharacterBase::Died()
 	MulticastHandleDeath();
 }
 
-void AAuraCharacterBase::Dissolve()
-{
-	if (DissolveMaterialInstance)
-	{
-		UMaterialInstanceDynamic* DynamicInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
-		GetMesh()->SetMaterial(0, DynamicInstance);
-		StartDissolveTimeline(DynamicInstance);
-	}
-	if (WeaponDissolveMaterialInstance)
-	{
-		UMaterialInstanceDynamic* WeaponDynamicInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
-		Weapon->SetMaterial(0, WeaponDynamicInstance);
-		WeaponStartDissolveTimeline(WeaponDynamicInstance);
-	}
-}
-
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	Weapon->SetSimulatePhysics(true);
@@ -77,6 +61,21 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	Dissolve();
 }
 
+void AAuraCharacterBase::Dissolve()
+{
+	if (DissolveMaterialInstance)
+	{
+		UMaterialInstanceDynamic* DynamicInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		GetMesh()->SetMaterial(0, DynamicInstance);
+		StartDissolveTimeline(DynamicInstance);
+	}
+	if (WeaponDissolveMaterialInstance)
+	{
+		UMaterialInstanceDynamic* WeaponDynamicInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		Weapon->SetMaterial(0, WeaponDynamicInstance);
+		WeaponStartDissolveTimeline(WeaponDynamicInstance);
+	}
+}
 
 // Called when the game starts or when spawned
 void AAuraCharacterBase::BeginPlay()

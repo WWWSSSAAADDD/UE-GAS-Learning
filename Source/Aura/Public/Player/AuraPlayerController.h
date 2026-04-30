@@ -27,8 +27,9 @@ class AURA_API AAuraPlayerController : public APlayerController
 public:
 	AAuraPlayerController();
 
+	// 只在触发的某个客户端显示，不用Server给所有Client显示--Client
 	UFUNCTION(Client, Reliable)
-	void ShowDamageText(float DamageValue, AActor* Target);
+	void ShowDamageText(float DamageValue, AActor* Target, bool bIsBlocked, bool bIsCritical);
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;

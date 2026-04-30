@@ -35,6 +35,7 @@ public:
 	virtual void Died() override;
 
 	// 开启布娃娃效果
+	// 全网一致服务器同步--NetMulticast；不希望丢失--Reliable
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 

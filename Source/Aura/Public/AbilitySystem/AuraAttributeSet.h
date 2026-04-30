@@ -212,5 +212,5 @@ private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 
 	// 调用PlayerController显示伤害UI
-	void ShowFloatingText(const FEffectProperties& Props, float DamageValue);
+	void ShowFloatingText(const FEffectProperties& Props, float DamageValue, bool bIsBlocked, bool bIsCritical);
 };

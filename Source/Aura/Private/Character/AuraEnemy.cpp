@@ -108,7 +108,6 @@ void AAuraEnemy::InitAbilityActorInfo()
 
 void AAuraEnemy::InitDefaultAttributes() const
 {
-	if (!HasAuthority()) return;
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
 

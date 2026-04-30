@@ -9,6 +9,7 @@
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "Game/AuraGameModeBase.h"
 #include "AbilitySystemComponent.h"
+#include "AuraAbilityTypes.h"
 
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContext)
 {
@@ -47,7 +48,7 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContext, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
 {
 	UCharacterClassInfo* Info = GetCharacterClassInfo(WorldContext);
-	check(Info);
+	if (!Info) return;
 	AActor* Avatar = ASC->GetAvatarActor();
 
 	FGameplayEffectContextHandle PrimaryAttributesContext = ASC->MakeEffectContext();
@@ -82,4 +83,40 @@ UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObj
 	AAuraGameModeBase* GameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContext));
 	if (GameMode) return GameMode->CharacterClassInfomation;
 	return nullptr;
+}
+
+bool UAuraAbilitySystemLibrary::IsBlocked(const FGameplayEffectContextHandle& ContextHandle)
+{
+	if (const FAuraGameplayEffectContext* EffectContext = static_cast<const FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		return EffectContext->GetIsBlocked();
+	}
+	return false;
+}
+
+bool UAuraAbilitySystemLibrary::IsCritical(const FGameplayEffectContextHandle& ContextHandle)
+{
+	if (const FAuraGameplayEffectContext* EffectContext = static_cast<const FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		return EffectContext->GetIsCritical();
+	}
+	return false;
+}
+
+void UAuraAbilitySystemLibrary::SetBlocked(UPARAM(ref)FGameplayEffectContextHandle& ContextHandle, bool bIsBlocked)
+{
+	if (FAuraGameplayEffectContext* EffectContext = static_cast<FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		EffectContext->SetIsBlocked(bIsBlocked);
+	}
+	return;
+}
+
+void UAuraAbilitySystemLibrary::SetCritical(UPARAM(ref)FGameplayEffectContextHandle& ContextHandle, bool bIsCritical)
+{
+	if (FAuraGameplayEffectContext* EffectContext = static_cast<FAuraGameplayEffectContext*>(ContextHandle.Get()))
+	{
+		EffectContext->SetIsCritical(bIsCritical);
+	}
+	return;
 }
