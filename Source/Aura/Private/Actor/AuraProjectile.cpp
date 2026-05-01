@@ -15,6 +15,9 @@
 AAuraProjectile::AAuraProjectile()
 {
  	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = true;
+	SetReplicateMovement(true);
+	NetUpdateFrequency = 100.f;
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere Collision");
 	SetRootComponent(Sphere);
@@ -48,35 +51,29 @@ void AAuraProjectile::BeginPlay()
 
 void AAuraProjectile::Destroyed()
 {
-	if (!bHit && !HasAuthority())
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		TrailSoundComponent->Stop();
-	}
 	Super::Destroyed();
 }
 
 void AAuraProjectile::OnProjectileOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
 	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	TrailSoundComponent->Stop();
+	if (!HasAuthority()) return;
 
-	if (HasAuthority())
-	{
+	AActor* EffectCauser = DamageHandle.Data.Get()->GetEffectContext().GetEffectCauser();
+	if (EffectCauser != OtherActor)
+	{	
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
+			MulticastHandleImpactEffect();
 			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageHandle.Data.Get());
 		}
-		
 		Destroy();
-	}
-	else
-	{
-		bHit = true;
 	}
 }
 
-
+void AAuraProjectile::MulticastHandleImpactEffect_Implementation()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	if (TrailSoundComponent) TrailSoundComponent->Stop();
+}

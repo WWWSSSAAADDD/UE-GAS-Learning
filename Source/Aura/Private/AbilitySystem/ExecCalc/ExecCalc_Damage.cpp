@@ -1,4 +1,4 @@
- // Copyright 
+// Copyright
 
 
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
@@ -17,6 +17,13 @@ struct AuraDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(ArcaneResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(LightingResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance);
+
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToDefinitions;
+
 	AuraDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, Armor, Target, false);
@@ -25,6 +32,26 @@ struct AuraDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitChance, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitDamage, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, FireResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArcaneResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, LightingResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, PhysicalResistance, Target, false);
+
+		// Ensure native gameplay tags are registered before we read them from the FAuraGameplayTags singleton
+		FAuraGameplayTags::InitializeNativeGameplayTags();
+
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Secondary_Armor, ArmorDef);
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Secondary_ArmorPenetration, ArmorPenetrationDef);
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Secondary_BlockChance, BlockChanceDef);
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Secondary_CriticalHitChance, CriticalHitChanceDef);
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Secondary_CriticalHitResistance, CriticalHitResistanceDef);
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Secondary_CriticalHitDamage, CriticalHitDamageDef);
+
+
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Resistance_Fire, FireResistanceDef);
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Resistance_Arcane, ArcaneResistanceDef);
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Resistance_Lighting, LightingResistanceDef);
+		TagsToDefinitions.Add(FAuraGameplayTags::Get().Attribute_Resistance_Physical, PhysicalResistanceDef);
 	}
 };
 
@@ -43,6 +70,10 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
+	RelevantAttributesToCapture.Add(DamageStatics().FireResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().ArcaneResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().LightingResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -65,8 +96,23 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ICombatInterface* TargetInterface = Cast<ICombatInterface>(TargetAvatar);
 
 	// 捕获SetByCaller的Damge标签的值
-	float DamageFromSetByCaller = EffectSpec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
-	
+	float DamageFromSetByCaller = 0.f;
+	for (const TPair<FGameplayTag, FGameplayTag>& Pair : FAuraGameplayTags::Get().DamageTypesToResistance)
+	{
+		FGameplayTag DamageTypeTag = Pair.Key;
+		FGameplayTag DamageResistanceTag = Pair.Value;
+		
+		float Damage = EffectSpec.GetSetByCallerMagnitude(DamageTypeTag);
+		FGameplayEffectAttributeCaptureDefinition ResistanceDef = DamageStatics().TagsToDefinitions[DamageResistanceTag];
+		float DamageResistance = 0.f;
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(ResistanceDef, Params, DamageResistance);
+		DamageResistance = FMath::Clamp<float>(DamageResistance, 0.f, 100.f);
+
+		DamageFromSetByCaller += Damage * (100 - DamageResistance) / 100;
+
+	}
+
+
 	float TargetArmor = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, Params, TargetArmor);
 	TargetArmor = FMath::Max<float>(0.f, TargetArmor);

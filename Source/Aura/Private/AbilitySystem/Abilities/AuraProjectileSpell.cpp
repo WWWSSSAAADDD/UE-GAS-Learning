@@ -33,7 +33,6 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		FRotator Rotation = (ProjectileTargetLocation - WeaponTipLocation).Rotation();
-		Rotation.Pitch = 0.f;
 		Projectile->SetActorRotation(Rotation.Quaternion());
 		
 		
@@ -42,10 +41,22 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		ContextHandle.SetAbility(this);
 		Projectile->DamageHandle = ASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), ContextHandle);
 
-		const float DamageValue = DamageMagnitude.GetValueAtLevel(GetAbilityLevel());
 
-		FGameplayTag DamageTag = FAuraGameplayTags::Get().Damage;
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Projectile->DamageHandle, DamageTag, DamageValue);
+		/* 尝试给Context添加信息 */
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(Projectile);
+		ContextHandle.AddActors(Actors);
+		FHitResult Hit;
+		Hit.Location = ProjectileTargetLocation;
+		ContextHandle.AddHitResult(Hit);
+
+		for (TPair<FGameplayTag, FScalableFloat>& Pair : DamageTypesToScalalbleFloat)
+		{
+			FGameplayTag& DamageTypeTag = Pair.Key;
+			FScalableFloat& DamageScalableFloat = Pair.Value;
+			const float DamageValue = DamageScalableFloat.GetValueAtLevel(GetAbilityLevel());
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Projectile->DamageHandle, DamageTypeTag, DamageValue);
+		}
 
 		Projectile->FinishSpawning(Transform);
 	}

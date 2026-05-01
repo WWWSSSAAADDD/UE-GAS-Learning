@@ -35,6 +35,10 @@ protected:
 	UFUNCTION()
 	void OnProjectileOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleImpactEffect();
+
 private:
 
 	UPROPERTY(VisibleAnywhere)
@@ -45,8 +49,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> ImpactSound;
-
-	bool bHit = false;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> TrailSound;

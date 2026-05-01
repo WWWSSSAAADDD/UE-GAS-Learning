@@ -29,6 +29,13 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Get().Attribute_Secondary_ManaRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.ManaRegeneration"), FString("每秒恢复法力值"));
 	Get().Attribute_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxMana"), FString("最大法力值"));
 
+	/* Resistance Attributes */
+	Get().Attribute_Resistance_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Fire"), FString("火焰抗性"));
+	Get().Attribute_Resistance_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Arcane"), FString("奥术抗性"));
+	Get().Attribute_Resistance_Lighting = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Lighting"), FString("雷电抗性"));
+	Get().Attribute_Resistance_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Physical"), FString("物理抗性"));
+
+
 	/* Input Tags */
 	Get().InputTag_RMB = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.RMB"), FString("鼠标左键"));
 	Get().InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.LMB"), FString("鼠标右键"));
@@ -39,6 +46,16 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	/* Abilities Tags */
 	Get().Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"), FString("伤害"));
+	Get().Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Fire"), FString("火焰伤害"));
+	Get().Damage_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Arcane"), FString("奥术伤害"));
+	Get().Damage_Lighting = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Lighting"), FString("雷电伤害"));
+	Get().Damage_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Physical"), FString("物理伤害"));
+
+	
+	Get().DamageTypesToResistance.Add(Get().Damage_Fire, Get().Attribute_Resistance_Fire);
+	Get().DamageTypesToResistance.Add(Get().Damage_Arcane, Get().Attribute_Resistance_Arcane);
+	Get().DamageTypesToResistance.Add(Get().Damage_Lighting, Get().Attribute_Resistance_Lighting);
+	Get().DamageTypesToResistance.Add(Get().Damage_Physical, Get().Attribute_Resistance_Physical);
 
 	/* Effects Tags */
 	Get().Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"), FString("受击反应"));
