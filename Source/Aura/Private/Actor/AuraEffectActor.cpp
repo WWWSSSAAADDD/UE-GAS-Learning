@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "ActiveGameplayEffectHandle.h"
+#include "Interaction/EnemyInterface.h"
 
 // Sets default values
 AAuraEffectActor::AAuraEffectActor()
@@ -25,6 +26,8 @@ void AAuraEffectActor::BeginPlay()
 
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
+	if (Cast<IEnemyInterface>(TargetActor) && !bCanApplyOnEnemy) return;
+
 	checkf(GameplayEffectClass, TEXT("没有设置ApplyEffectToTarget的输入参数GameplayEffectClass"));
 	
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
@@ -42,6 +45,11 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	if (IsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
 		ActiveGEHandles.Add(ActiveGEHandle, TargetASC);
+	}
+
+	if (bDestroyAfterApplication)
+	{
+		Destroy();
 	}
 }
 

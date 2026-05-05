@@ -51,6 +51,8 @@ public:
 
 	/* Ability Tags */
 	FGameplayTag Damage;
+
+
 	// 伤害类型
 	FGameplayTag Damage_Fire;
 	FGameplayTag Damage_Arcane;

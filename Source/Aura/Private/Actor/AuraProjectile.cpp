@@ -62,9 +62,9 @@ void AAuraProjectile::OnProjectileOverlap(UPrimitiveComponent* OverlappedCompone
 	AActor* EffectCauser = DamageHandle.Data.Get()->GetEffectContext().GetEffectCauser();
 	if (EffectCauser != OtherActor)
 	{	
+		MulticastHandleImpactEffect();
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			MulticastHandleImpactEffect();
 			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageHandle.Data.Get());
 		}
 		Destroy();

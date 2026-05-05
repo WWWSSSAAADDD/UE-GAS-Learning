@@ -61,6 +61,7 @@ class AURA_API UAuraAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 public:
+	// 可用于Attribute Menu绑定委托
 	using GetAttributeFunc = StaticFuncType<FGameplayAttribute>;
 	TMap<FGameplayTag, GetAttributeFunc> TagsToAttributes;
 
