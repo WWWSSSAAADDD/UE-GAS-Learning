@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "AbilitySystem/Data/CombatSocketInfo.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
@@ -62,7 +63,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "Combat") // 所有成员指针都要有UPROPERTY宏，否则会被垃圾回收掉
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat") // 所有成员指针都要有UPROPERTY宏，否则会被垃圾回收掉
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 	
 	UPROPERTY(EditAnywhere, Category = "Combat")
@@ -73,6 +74,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName RightHandSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TObjectPtr<class UCombatSocketInfo> CombatSocketInfo;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;

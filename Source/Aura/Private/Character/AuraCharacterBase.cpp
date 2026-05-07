@@ -9,6 +9,7 @@
 #include "Aura/Aura.h"
 #include <Net\UnrealNetwork.h>
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/Data/CombatSocketInfo.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -39,19 +40,20 @@ UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const n
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(FGameplayTag AttackMontageTag)
 {
-	if (AttackMontageTag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_Weapon))
+	check(CombatSocketInfo);
+	bool bUseWeapon = false;
+	FName SocketName = CombatSocketInfo->GetCombatSocketName(AttackMontageTag, bUseWeapon);
+
+	if (bUseWeapon)
 	{
 		check(Weapon);
-		return Weapon->GetSocketLocation(WeaponTipSocketName);
+		return Weapon->GetSocketLocation(SocketName);
 	}
-	if (AttackMontageTag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_LeftHand))
+	else
 	{
-		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+		return GetMesh()->GetSocketLocation(SocketName);
 	}
-	if (AttackMontageTag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_RightHand))
-	{
-		return GetMesh()->GetSocketLocation(RightHandSocketName);
-	}
+
 	return FVector();
 }
 
