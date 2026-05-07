@@ -27,7 +27,8 @@ class AURA_API AAuraPlayerController : public APlayerController
 public:
 	AAuraPlayerController();
 
-	// 只在触发的某个客户端显示，不用Server给所有Client显示--Client
+	// Client声明 -> 只在触发的某个客户端显示，不用Server给所有Client显示--Client
+	// 造成伤害的非AI玩家都显示DamageText
 	UFUNCTION(Client, Reliable)
 	void ShowDamageText(float DamageValue, AActor* Target, bool bIsBlocked, bool bIsCritical);
 protected:

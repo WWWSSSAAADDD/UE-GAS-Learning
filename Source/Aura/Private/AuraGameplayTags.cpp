@@ -44,8 +44,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Get().InputTag_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.3"), FString("key3"));
 	Get().InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.4"), FString("key4"));
 
-	/* Abilities Tags */
-	Get().Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"), FString("伤害"));
+	/* DamageTypeTag，用于调用TagSetByCaller */
 	Get().Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Fire"), FString("火焰伤害"));
 	Get().Damage_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Arcane"), FString("奥术伤害"));
 	Get().Damage_Lighting = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Lighting"), FString("雷电伤害"));
@@ -57,7 +56,17 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Get().DamageTypesToResistance.Add(Get().Damage_Lighting, Get().Attribute_Resistance_Lighting);
 	Get().DamageTypesToResistance.Add(Get().Damage_Physical, Get().Attribute_Resistance_Physical);
 
+
+	/* Ability Tags，用于激活GA的Tag*/
 	/* Effects Tags */
 	Get().Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"), FString("受击反应"));
 
+	Get().Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Attack"), FString("攻击"));
+
+	/* End Ability Tags*/
+
+	/* Montage Tags，用于Montage发送GameplayEvent的Tag*/
+	Get().Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"), FString("此攻击蒙太奇需要Weapon的Socket"));
+	Get().Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand"), FString("此攻击蒙太奇需要LeftHand的Socket"));
+	Get().Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.RightHand"), FString("此攻击蒙太奇需要RightHand的Socket"));
 }

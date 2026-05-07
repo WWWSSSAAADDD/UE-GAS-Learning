@@ -22,22 +22,26 @@ public:
 	// Sets default values for this character's properties
 	AAuraCharacterBase();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const noexcept override;
 	UAttributeSet* GetAttributeSet() const noexcept { return AttributeSet; }
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
-	virtual FVector GetWeaponTipLocation() override;
-
+	/* CombatInterface */
+	virtual FVector GetCombatSocketLocation_Implementation(FGameplayTag AttackMontageTag) override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
-
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
+    virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
 	virtual void Died() override;
-
 	// 开启布娃娃效果
 	// 全网一致服务器同步--NetMulticast；不希望丢失--Reliable
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
+	/* End CombatInterface*/
 
 	void Dissolve();
 
@@ -64,6 +68,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName WeaponTipSocketName;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName LeftHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName RightHandSocketName;
+
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -86,10 +96,16 @@ protected:
 	/* 用于服务器给角色授予初始能力 */
 	void GrantAbilities();
 
+	UPROPERTY(Replicated)
+	bool bDead = false;
+
 private:
 	// 初始化Attributes的辅助函数
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	UAnimMontage* HitReactMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TArray<FTaggedMontage> AttackMontages;
 };

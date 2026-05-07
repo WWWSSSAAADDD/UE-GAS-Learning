@@ -6,6 +6,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Components/WidgetComponent.h"
+#include "Engine/EngineTypes.h"
 #include "UI/Widget/AuraUserWidget.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AuraGameplayTags.h"
@@ -26,6 +27,7 @@ AAuraEnemy::AAuraEnemy() {
 
 	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
@@ -55,6 +57,16 @@ void AAuraEnemy::UnHighlightActor() {
 	Weapon->SetRenderCustomDepth(false);
 }
 
+void AAuraEnemy::SetAttackTarget_Implementation(AActor* InActor)
+{
+	AttackTarget = InActor;
+}
+
+AActor* AAuraEnemy::GetAttackTarget_Implementation()
+{
+	return AttackTarget;
+}
+
 int32 AAuraEnemy::GetPlayerLevel()
 {
 	return Level;
@@ -70,12 +82,6 @@ void AAuraEnemy::BeginPlay() {
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
-
-	if (HasAuthority())
-	{
-		// 初始化Enemy的Ability
-		UAuraAbilitySystemLibrary::InitializeDefaultAbilities(this, AbilitySystemComponent);
-	}
 
 	// 设置HealthBar的WidgetController，这会触发HealthBar的WidgetControllerSet事件
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetWidget()))
@@ -118,8 +124,6 @@ void AAuraEnemy::OnHitReactChanged(const FGameplayTag Tag, int32 NewCount)
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
 	AIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
-
-	UE_LOG(LogTemp, Warning, TEXT("Hit React Changed"));
 	
 }
 
@@ -128,8 +132,10 @@ void AAuraEnemy::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
+	// 给Enemy初始化Attributes、Abilities
 	if (!HasAuthority()) return;
 	InitDefaultAttributes();
+	UAuraAbilitySystemLibrary::InitializeDefaultAbilities(this, AbilitySystemComponent, CharacterClass);
 }
 
 void AAuraEnemy::InitDefaultAttributes() const

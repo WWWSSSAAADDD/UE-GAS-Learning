@@ -7,6 +7,8 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Aura/Aura.h"
+#include <Net\UnrealNetwork.h>
+#include "AuraGameplayTags.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -25,14 +27,32 @@ AAuraCharacterBase::AAuraCharacterBase()
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 }
 
+void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{	
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION_NOTIFY(AAuraCharacterBase, bDead, COND_None, REPNOTIFY_Always);
+}
+
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const noexcept {
 	return AbilitySystemComponent;
 }
 
-FVector AAuraCharacterBase::GetWeaponTipLocation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(FGameplayTag AttackMontageTag)
 {
-	check(Weapon);
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	if (AttackMontageTag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_Weapon))
+	{
+		check(Weapon);
+		return Weapon->GetSocketLocation(WeaponTipSocketName);
+	}
+	if (AttackMontageTag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	if (AttackMontageTag.MatchesTagExact(FAuraGameplayTags::Get().Montage_Attack_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	return FVector();
 }
 
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation() const
@@ -40,9 +60,26 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation() const
 	return HitReactMontage;
 }
 
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
+TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontages_Implementation() const
+{
+	return AttackMontages;
+}
+
 void AAuraCharacterBase::Died()
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules(FAttachmentTransformRules::KeepWorldTransform, true));
+	if (HasAuthority()) bDead = true;
+
 	MulticastHandleDeath();
 }
 

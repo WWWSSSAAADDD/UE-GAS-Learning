@@ -29,6 +29,8 @@ public:
 	/* Enemy Interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+	virtual void SetAttackTarget_Implementation(AActor* InActor) override;
+	virtual AActor* GetAttackTarget_Implementation() override;
 	/* end Enemy Interface */
 
 	/* Combat Interface */
@@ -75,5 +77,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AActor> AttackTarget;
 private:
 };

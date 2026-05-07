@@ -194,6 +194,10 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 			{
 				PC->ShowDamageText(DamageValue, Props.TargetAvatarActor, bIsBlocked, bIsCritical);
 			}
+			if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.TargetController))
+			{
+				PC->ShowDamageText(DamageValue, Props.TargetAvatarActor, bIsBlocked, bIsCritical);
+			}
 		}
 }
 

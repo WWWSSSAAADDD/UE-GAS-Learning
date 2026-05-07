@@ -5,8 +5,20 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "GameplayTagContainer.h"
 #include "CombatInterface.generated.h"
 
+USTRUCT(BlueprintType)
+struct FTaggedMontage
+{
+	GENERATED_BODY();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UAnimMontage> Montage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag MontageTag;
+};
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI, BlueprintType)
@@ -26,7 +38,9 @@ class AURA_API ICombatInterface
 public:
 	virtual int32 GetPlayerLevel();
 
-	virtual FVector GetWeaponTipLocation();
+	// 规定Tag和AttackMontage的Tag一致
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector GetCombatSocketLocation(FGameplayTag MontageAttackTag);
 
 	// 接口中的BlueprintImplementableEvent函数是“可选能力”，并不会保证所有实现了该接口的类都实现了这个函数
 	// 使用时必须确保已经实现了
@@ -44,4 +58,13 @@ public:
 	void TempFunc() const;
 
 	virtual void Died() = 0;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool IsDead() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	AActor* GetAvatar();
+
+  UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	TArray<FTaggedMontage> GetAttackMontages() const;
 };

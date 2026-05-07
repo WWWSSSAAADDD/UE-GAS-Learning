@@ -11,7 +11,10 @@
 	],
 	"settings": {
 		"typescript.tsc.autoDetect": "off",
-		"npm.autoDetect": "off"
+		"npm.autoDetect": "off",
+		"C_Cpp.formatting": "clangFormat",
+		"C_Cpp.clang_format_style": "file",
+		"C_Cpp.clang_format_fallbackStyle": "none"
 	},
 	"extensions": {
 		"recommendations": [

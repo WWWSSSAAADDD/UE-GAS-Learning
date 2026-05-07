@@ -30,7 +30,7 @@ public:
 	
 	// 用于给AI敌人初始化Ability，例如GA_HitReact
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|CharacterClassDefaults")
-	static void InitializeDefaultAbilities(const UObject* WorldContext, UAbilitySystemComponent* ASC);
+	static void InitializeDefaultAbilities(const UObject* WorldContext, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContext);
@@ -46,4 +46,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayEffect")
 	static void SetCritical(UPARAM(ref) FGameplayEffectContextHandle& ContextHandle, bool bIsBlocked);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayEffect")
+	static void GetActorsWithinRadius(const UObject* WorldContext, TArray<AActor*>& OutActors,
+		const TArray<AActor*>& IgnoreActors, float Radius, const FVector& SphereOrigin);
 };

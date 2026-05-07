@@ -49,18 +49,24 @@ public:
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
 
-	/* Ability Tags */
-	FGameplayTag Damage;
-
-
-	// 伤害类型
+	// 伤害类型，用于调用TagSetByCaller
 	FGameplayTag Damage_Fire;
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Lighting;
 	FGameplayTag Damage_Physical;
 
-	/* Effect Tags */
+	/* Ability Tags，用于激活GA的Tag*/
+	FGameplayTag Abilities_Attack;
+
+	/* Effect Tags，用Tag来激活GA */
 	FGameplayTag Effects_HitReact;
+
+	/* End Ability Tags */
+
+	/* Montage Tags 用于Montage发送GameplayEvent的Tag*/
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_LeftHand;
+	FGameplayTag Montage_Attack_RightHand;
 
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistance;
 

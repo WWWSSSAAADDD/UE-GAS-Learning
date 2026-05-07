@@ -10,6 +10,7 @@
 #include "Game/AuraGameModeBase.h"
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
+#include "Interaction/CombatInterface.h"
 
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContext)
 {
@@ -68,15 +69,22 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 
 }
 
-void UAuraAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldContext, UAbilitySystemComponent* ASC)
+void UAuraAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldContext, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass)
 {
 	UCharacterClassInfo* Info = GetCharacterClassInfo(WorldContext);
 	check(Info);
 	for (TSubclassOf<UGameplayAbility> AbilityClass : Info->CommonAbilities)
 	{
-		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass);
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1.f);
 		ASC->GiveAbility(AbilitySpec);
 	}
+	for (TSubclassOf<UGameplayAbility>& AbilityClass : Info->GetClassDefaultInfo(CharacterClass).StartupAbilities)
+	{
+		float Level = Cast<ICombatInterface>(ASC->GetAvatarActor())->GetPlayerLevel();
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, Level);
+		ASC->GiveAbility(AbilitySpec);
+	}
+
 }
 UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContext)
 {
@@ -119,4 +127,30 @@ void UAuraAbilitySystemLibrary::SetCritical(UPARAM(ref)FGameplayEffectContextHan
 		EffectContext->SetIsCritical(bIsCritical);
 	}
 	return;
+}
+
+void UAuraAbilitySystemLibrary::GetActorsWithinRadius(const UObject* WorldContext, TArray<AActor*>& OutActors, 
+	const TArray<AActor*>& IgnoreActors, float Radius, const FVector& SphereOrigin)
+{
+	FCollisionQueryParams Params;
+
+	Params.AddIgnoredActors(IgnoreActors);
+
+	TArray<FOverlapResult> Overlaps;
+
+	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContext, EGetWorldErrorMode::Assert))
+	{
+		World->OverlapMultiByObjectType(Overlaps, SphereOrigin, FQuat(),
+			FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects),
+			FCollisionShape::MakeSphere(Radius),
+			Params);
+		for (FOverlapResult& Overlap : Overlaps)
+		{
+			if (Overlap.GetActor()->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsDead(Overlap.GetActor()))
+			{
+				OutActors.AddUnique(Overlap.GetActor());
+			}
+		}
+	}
+	
 }
