@@ -8,6 +8,27 @@
 #include "AuraGameplayTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
+
+
+bool UAuraProjectileSpell::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	if (const UAbilitySystemComponent* ASC = ActorInfo ? ActorInfo->AbilitySystemComponent.Get() : nullptr)
+	{
+		if (const FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromHandle(Handle); Spec && Spec->IsActive())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s blocked while already active on %s"), *GetNameSafe(this), *GetNameSafe(ActorInfo->AvatarActor.Get()));
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 

@@ -28,6 +28,7 @@ AAuraEnemy::AAuraEnemy() {
 	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
@@ -75,6 +76,12 @@ int32 AAuraEnemy::GetPlayerLevel()
 void AAuraEnemy::Died()
 {
 	SetLifeSpan(LifeSpan);
+
+	if (AIController)
+	{
+		AIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
+	}
+
 	Super::Died();
 }
 

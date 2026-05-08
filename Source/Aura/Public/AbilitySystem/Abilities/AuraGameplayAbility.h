@@ -18,6 +18,7 @@ class AURA_API UAuraGameplayAbility : public UGameplayAbility
 	GENERATED_BODY()
 	
 public:
+	UAuraGameplayAbility();
 	// Ability的初始Tag
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag StartInputTag;

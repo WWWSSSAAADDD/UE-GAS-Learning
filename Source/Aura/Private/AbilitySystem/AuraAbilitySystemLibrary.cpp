@@ -154,3 +154,10 @@ void UAuraAbilitySystemLibrary::GetActorsWithinRadius(const UObject* WorldContex
 	}
 	
 }
+
+bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
+{
+	const bool FirstIsPlayer = FirstActor->ActorHasTag(FName("Player"));
+	const bool SecondIsPlayer = SecondActor->ActorHasTag(FName("Player"));
+	return !((FirstIsPlayer && SecondIsPlayer) || (!FirstIsPlayer && !SecondIsPlayer));
+}

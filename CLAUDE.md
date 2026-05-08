@@ -8,7 +8,10 @@ Aura 是一个使用 Unreal Engine 5.3 和 Gameplay Ability System (GAS) 构建�
 
 **引擎**: Unreal Engine 5.3  
 **语言**: C++ 结合 Blueprint  
-**核心系统**: Gameplay Ability System, Enhanced Input, AI (行为树, EQS), Niagara VFX
+**核心系统**: Gameplay Ability System, Enhanced Input, AI (行为树, EQS), Niagara VFX  
+**模块**: 运行时 C++ 模块名为 `Aura`（位于 `Source/Aura/`）
+
+**另请参考**: 仓库根目录的 `AGENTS.md` 包含面向 agent 的额外指导（提交风格、勿回滚用户改动、改动 C++ 前检查对应 Blueprint 等）。
 
 ## 构建命令
 
@@ -38,6 +41,12 @@ cd "E:\Epic Games\UE_5.3"
 Engine/Build/BatchFiles/RunUBT.bat -projectfiles -vscode -project="E:\Epic Games\project\Aura\Aura.uproject" -game -engine -dotnet
 ```
 
+**生成 compile_commands.json** (供 clangd / IDE IntelliSense 使用):
+```powershell
+powershell -File .\GenerateClangDatabase.ps1
+```
+脚本会调用 `Build.bat -Mode=GenerateClangDatabase`，并把结果复制到 `.vscode/compile_commands.json`。可通过 `-Target` / `-UeRoot` 参数或 `UE_ROOT` 环境变量覆盖默认值。
+
 其他可用的构建配置: Debug, DebugGame, Test, Shipping。
 
 ## 架构
@@ -65,6 +74,10 @@ Engine/Build/BatchFiles/RunUBT.bat -projectfiles -vscode -project="E:\Epic Games
 - 实现自定义序列化以支持网络复制
 - 用于在伤害管线中传递战斗结果信息（格挡、暴击）
 
+**AbilitySystem Globals**: `UAuraAbilitySystemGlobals`
+- 重写 `AllocGameplayEffectContext()` 返回 `FAuraGameplayEffectContext`，使整个 GAS 管线使用自定义 context
+- 需要在 `Config/DefaultGame.ini` 中注册为 GameplayAbilities 的 Globals 类
+
 **伤害计算**: `UExecCalc_Damage`
 - 用于复杂伤害公式的执行计算
 - 捕获来源（攻击者）和目标（防御者）的属性
@@ -86,7 +99,7 @@ Engine/Build/BatchFiles/RunUBT.bat -projectfiles -vscode -project="E:\Epic Games
 - 通过 GameplayEffects 处理默认属性初始化
 - 为角色授予初始技能
 - 实现死亡系统，包含溶解材质效果和布娃娃物理
-- 存储战斗插槽（WeaponTip, LeftHand, RightHand）和攻击蒙太奇
+- 通过 `UCombatSocketInfo` DataAsset 配置战斗插槽与对应的 `FTaggedMontage` 攻击蒙太奇（取代原先硬编码的 WeaponTip / LeftHand / RightHand 字段）
 
 **玩家角色**: `AAuraCharacter`
 - 在客户端和服务器上初始化 ASC/AttributeSet（支持多人联机）
@@ -185,6 +198,7 @@ Engine/Build/BatchFiles/RunUBT.bat -projectfiles -vscode -project="E:\Epic Games
 - `DA_AttributeInfo`：用于 UI 显示的属性元数据
 - `DA_InputConfig`：输入动作到 gameplay tag 的映射
 - `DA_DefaultAttributes`：角色职业默认属性
+- `DA_*_CombatSocketInfo`（如 `DA_Shaman_CombatSocketInfo`）：每个角色的战斗插槽与 `FTaggedMontage` 攻击蒙太奇配置
 
 **DataTables**:
 - `DT_MessageWidgetData`：将 gameplay tags 映射到 UI 消息组件
@@ -207,6 +221,8 @@ Engine/Build/BatchFiles/RunUBT.bat -projectfiles -vscode -project="E:\Epic Games
 - 原生 gameplay tags 在 `FAuraGameplayTags::InitializeNativeGameplayTags()` 中初始化
 - 属性访问器使用 `ATTRIBUTE_ACCESSORS` 宏
 - 代码库中使用中文注释进行文档说明
+- 格式化遵循 `.clang-format`：LLVM 基础、4 空格 tab、Allman 大括号、`ColumnLimit: 0`（无列宽限制）、保留 include 顺序（`SortIncludes: false`）、指针/引用左对齐
+- 命名遵循 `.editorconfig`：`A` actor、`U` UObject、`F` 结构体、`E` 枚举、`T` 模板、`b` 布尔
 
 ## 常见工作流程
 

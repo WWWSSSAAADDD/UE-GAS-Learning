@@ -55,4 +55,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> TrailSoundComponent;
+
+	bool bHit = false;
 };

@@ -1,20 +1,20 @@
-// Copyright 
-
+// Copyright
 
 #include "Actor/AuraProjectile.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 #include "Aura/Aura.h"
-#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystemComponent.h"
 
 // Sets default values
 AAuraProjectile::AAuraProjectile()
 {
- 	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
 	SetReplicateMovement(true);
 	NetUpdateFrequency = 100.f;
@@ -33,6 +33,7 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovementComponent->InitialSpeed = 550.f;
 	ProjectileMovementComponent->MaxSpeed = 550.f;
 	ProjectileMovementComponent->ProjectileGravityScale = 0.f;
+	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 }
 
 void AAuraProjectile::BeginPlay()
@@ -40,13 +41,13 @@ void AAuraProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnProjectileOverlap);
-	
+
 	TrailSoundComponent = UGameplayStatics::SpawnSoundAttached(
-		TrailSound.Get(),
-		GetRootComponent(),
-		NAME_None,
-		FVector::ZeroVector,
-		EAttachLocation::KeepRelativeOffset);
+	    TrailSound.Get(),
+	    GetRootComponent(),
+	    NAME_None,
+	    FVector::ZeroVector,
+	    EAttachLocation::KeepRelativeOffset);
 }
 
 void AAuraProjectile::Destroyed()
@@ -54,14 +55,31 @@ void AAuraProjectile::Destroyed()
 	Super::Destroyed();
 }
 
-void AAuraProjectile::OnProjectileOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
-	UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AAuraProjectile::OnProjectileOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                          UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!HasAuthority()) return;
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!DamageHandle.Data.IsValid() || 
+		!UAuraAbilitySystemLibrary::IsNotFriend(DamageHandle.Data.Get()->GetEffectContext().GetEffectCauser(), OtherActor))
+	{
+		return;
+	}
+
+	if (bHit) 
+	{
+		return;
+	}
 
 	AActor* EffectCauser = DamageHandle.Data.Get()->GetEffectContext().GetEffectCauser();
-	if (EffectCauser != OtherActor)
-	{	
+	if (!bHit && EffectCauser != OtherActor)
+	{
+		bHit = true;
+		Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ProjectileMovementComponent->StopMovementImmediately();
 		MulticastHandleImpactEffect();
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
@@ -75,5 +93,8 @@ void AAuraProjectile::MulticastHandleImpactEffect_Implementation()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	if (TrailSoundComponent) TrailSoundComponent->Stop();
+	if (TrailSoundComponent)
+	{
+		TrailSoundComponent->Stop();
+	}
 }
