@@ -17,7 +17,7 @@ struct FCombatSocketMapping
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
-	FGameplayTag MontageTag;
+	FGameplayTag SocketTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	FName CombatSocketName;

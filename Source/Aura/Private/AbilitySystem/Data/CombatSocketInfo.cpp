@@ -8,7 +8,7 @@ FName UCombatSocketInfo::GetCombatSocketName(FGameplayTag MontageTag, bool& bUse
 {
     for (const FCombatSocketMapping& SocketMapping : CombatSocketConfigs)
     {
-        if (SocketMapping.MontageTag.MatchesTagExact(MontageTag))
+        if (SocketMapping.SocketTag.MatchesTagExact(MontageTag))
         {
             bUseWeapon = SocketMapping.bUseWeapon;
             return SocketMapping.CombatSocketName;

@@ -31,7 +31,7 @@ protected:
 	bool bAllowOnlyOneProjectilePerActivation = true;
 
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
-	void SpawnProjectile(const FVector& ProjectileTargetLocation);
+	void SpawnProjectile(const FVector& ProjectileTargetLocation, FGameplayTag SocketTag);
 
 private:
 	bool bHasSpawnedProjectile = false;

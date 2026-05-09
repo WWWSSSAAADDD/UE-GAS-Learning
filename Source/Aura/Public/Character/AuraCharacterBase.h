@@ -13,6 +13,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
 class UGameplayAbility;
+class UNiagaraSystem;
 
 UCLASS(Abstract)
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface  // 附带AbilitySystemComponent的实现接口以后便于操作Component
@@ -32,11 +33,13 @@ public:
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 	/* CombatInterface */
-	virtual FVector GetCombatSocketLocation_Implementation(FGameplayTag AttackMontageTag) override;
+	virtual FVector GetCombatSocketLocation_Implementation(FGameplayTag SocketTag) override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
     virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() const override;
+	virtual FTaggedMontage GetSpecificAttackMontage_Implementation(FGameplayTag MontageTag) const override;
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() const override;
 	virtual void Died() override;
 	// 开启布娃娃效果
 	// 全网一致服务器同步--NetMulticast；不希望丢失--Reliable
@@ -112,4 +115,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TObjectPtr<UNiagaraSystem> BloodEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TObjectPtr<USoundBase> DeathSound;
 };

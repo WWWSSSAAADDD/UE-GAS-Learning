@@ -64,9 +64,18 @@ public:
 	/* End Ability Tags */
 
 	/* Montage Tags 用于Montage发送GameplayEvent的Tag*/
+	/* 目前Montage Tags的GameplayEvent功能与GetSocketLocation功能耦合*/
+
+	/* Socket Tags 用于映射到对应的Socket Name，参见CombatSocketInfo*/
+	FGameplayTag Socket_Attack_Weapon;
+	FGameplayTag Socket_Attack_LeftHand;
+	FGameplayTag Socket_Attack_RightHand;
+
+	/* Montage TAgs*/
 	FGameplayTag Montage_Attack_Weapon;
 	FGameplayTag Montage_Attack_LeftHand;
 	FGameplayTag Montage_Attack_RightHand;
+	FGameplayTag Montage_Attack_Tail;
 
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistance;
 

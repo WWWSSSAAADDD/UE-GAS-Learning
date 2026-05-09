@@ -65,8 +65,14 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	/* End Ability Tags*/
 
-	/* Montage Tags，用于Montage发送GameplayEvent的Tag*/
-	Get().Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"), FString("此攻击蒙太奇需要Weapon的Socket"));
-	Get().Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand"), FString("此攻击蒙太奇需要LeftHand的Socket"));
-	Get().Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.RightHand"), FString("此攻击蒙太奇需要RightHand的Socket"));
+	/* Socket Tags, 用于寻找攻击使用的SocketName*/
+	Get().Socket_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Socket.Attack.Weapon"), FString("该Tag将映射到Weapon的SocketName"));
+	Get().Socket_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Socket.Attack.LeftHand"), FString("该Tag将映射到LeftHand的SocketName"));
+	Get().Socket_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Socket.Attack.RightHand"), FString("该Tag将映射到RightHand的SocketName"));
+
+	/* Montage Tags，用于Montage发送GameplayEvent的Tag，用于查找对应的TaggedMontage*/
+	Get().Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"), FString("Weapon Attack 蒙太奇"));
+	Get().Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand"), FString("LeftHand Attack 蒙太奇"));
+	Get().Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.RightHand"), FString("RightHand Attack 蒙太奇"));
+	Get().Montage_Attack_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Tail"), FString("Tail Attack 蒙太奇"));
 }

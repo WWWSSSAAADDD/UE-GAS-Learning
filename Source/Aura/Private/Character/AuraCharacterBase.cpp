@@ -10,6 +10,7 @@
 #include <Net\UnrealNetwork.h>
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/Data/CombatSocketInfo.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -38,11 +39,11 @@ UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const n
 	return AbilitySystemComponent;
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(FGameplayTag AttackMontageTag)
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(FGameplayTag SocketTag)
 {
 	check(CombatSocketInfo);
 	bool bUseWeapon = false;
-	FName SocketName = CombatSocketInfo->GetCombatSocketName(AttackMontageTag, bUseWeapon);
+	FName SocketName = CombatSocketInfo->GetCombatSocketName(SocketTag, bUseWeapon);
 
 	if (bUseWeapon)
 	{
@@ -77,6 +78,23 @@ TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontages_Implementation() co
 	return AttackMontages;
 }
 
+FTaggedMontage AAuraCharacterBase::GetSpecificAttackMontage_Implementation(FGameplayTag MontageTag) const
+{
+	for (const FTaggedMontage& AttackMontage : AttackMontages)
+	{
+		if (AttackMontage.MontageTag.MatchesTagExact(MontageTag))
+		{
+			return AttackMontage;
+		}
+	}
+	return FTaggedMontage();
+}
+
+UNiagaraSystem* AAuraCharacterBase::GetBloodEffect_Implementation() const
+{
+	return BloodEffect;
+}
+
 void AAuraCharacterBase::Died()
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules(FAttachmentTransformRules::KeepWorldTransform, true));
@@ -87,6 +105,8 @@ void AAuraCharacterBase::Died()
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);

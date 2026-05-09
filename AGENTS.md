@@ -1,5 +1,10 @@
 # Repository Guidelines
 
+## 项目信息
+- 本项目是跟随udemy课程学习的学习项目
+- udemy课程地址：https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/
+- 课程GitHub项目：https://github.com/DruidMech/GameplayAbilitySystem_Aura
+
 ## Project Structure & Module Organization
 
 This is an Unreal Engine 5.3 project. The runtime C++ module is `Aura`.

@@ -2,6 +2,11 @@
 
 本文件为 Claude Code (claude.ai/code) 在此代码库中工作时提供指导。
 
+## 项目信息
+- 本项目是跟随udemy课程学习的学习项目
+- udemy课程地址：https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/
+- 课程GitHub项目：https://github.com/DruidMech/GameplayAbilitySystem_Aura
+
 ## 项目概述
 
 Aura 是一个使用 Unreal Engine 5.3 和 Gameplay Ability System (GAS) 构建的动作 RPG 游戏。项目实现了支持多人联机的战斗系统，包含属性、技能、伤害计算、AI 敌人和 UI 组件。

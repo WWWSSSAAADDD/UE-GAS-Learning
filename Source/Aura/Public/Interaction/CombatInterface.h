@@ -8,6 +8,8 @@
 #include "GameplayTagContainer.h"
 #include "CombatInterface.generated.h"
 
+class UNiagaraSystem;
+
 USTRUCT(BlueprintType)
 struct FTaggedMontage
 {
@@ -18,6 +20,12 @@ struct FTaggedMontage
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag MontageTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag SocketTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<USoundBase> ImpactSound;
 };
 
 // This class does not need to be modified.
@@ -40,7 +48,7 @@ public:
 
 	// 规定Tag和AttackMontage的Tag一致
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetCombatSocketLocation(FGameplayTag MontageAttackTag);
+	FVector GetCombatSocketLocation(FGameplayTag SocketTag);
 
 	// 接口中的BlueprintImplementableEvent函数是“可选能力”，并不会保证所有实现了该接口的类都实现了这个函数
 	// 使用时必须确保已经实现了
@@ -65,6 +73,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	AActor* GetAvatar();
 
-  UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	TArray<FTaggedMontage> GetAttackMontages() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UNiagaraSystem* GetBloodEffect() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FTaggedMontage GetSpecificAttackMontage(FGameplayTag MontageTag) const;
 };
