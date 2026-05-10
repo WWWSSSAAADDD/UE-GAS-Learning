@@ -57,6 +57,7 @@ public:
 
 	/* Ability Tags，用于激活GA的Tag*/
 	FGameplayTag Abilities_Attack;
+	FGameplayTag Abilities_Summon;
 
 	/* Effect Tags，用Tag来激活GA */
 	FGameplayTag Effects_HitReact;
@@ -70,6 +71,7 @@ public:
 	FGameplayTag Socket_Attack_Weapon;
 	FGameplayTag Socket_Attack_LeftHand;
 	FGameplayTag Socket_Attack_RightHand;
+	FGameplayTag Socket_Attack_Tail;
 
 	/* Montage TAgs*/
 	FGameplayTag Montage_Attack_Weapon;

@@ -106,6 +106,9 @@ protected:
 	UPROPERTY(Replicated)
 	bool bDead = false;
 
+	UPROPERTY(BlueprintReadWrite)
+	int32 MinionCount = 0;
+
 private:
 	// 初始化Attributes的辅助函数
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;

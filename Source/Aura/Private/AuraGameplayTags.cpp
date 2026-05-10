@@ -62,6 +62,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Get().Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"), FString("受击反应"));
 
 	Get().Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Attack"), FString("攻击"));
+	Get().Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Summon"), FString("召唤"));
 
 	/* End Ability Tags*/
 
@@ -69,6 +70,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Get().Socket_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Socket.Attack.Weapon"), FString("该Tag将映射到Weapon的SocketName"));
 	Get().Socket_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Socket.Attack.LeftHand"), FString("该Tag将映射到LeftHand的SocketName"));
 	Get().Socket_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Socket.Attack.RightHand"), FString("该Tag将映射到RightHand的SocketName"));
+	Get().Socket_Attack_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Socket.Attack.Tail"), FString("该Tag将映射到Tail的SocketName"));
 
 	/* Montage Tags，用于Montage发送GameplayEvent的Tag，用于查找对应的TaggedMontage*/
 	Get().Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"), FString("Weapon Attack 蒙太奇"));

@@ -39,11 +39,10 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleImpactEffect();
 
-private:
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> Sphere;
 
+private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> ImpactEffect;
 
