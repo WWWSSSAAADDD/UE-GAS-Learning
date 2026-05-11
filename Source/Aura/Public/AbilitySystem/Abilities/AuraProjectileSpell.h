@@ -33,6 +33,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, FGameplayTag SocketTag);
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float PitchOffsetDegrees = 0.f;
+
 private:
 	bool bHasSpawnedProjectile = false;
 };

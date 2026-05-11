@@ -30,6 +30,7 @@ AAuraEnemy::AAuraEnemy() {
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_CursorTrace, ECR_Block);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");

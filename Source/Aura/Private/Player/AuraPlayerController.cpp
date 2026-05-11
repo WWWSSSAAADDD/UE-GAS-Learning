@@ -1,7 +1,7 @@
 // Copyright
 
 #include "Player/AuraPlayerController.h"
-
+#include "Aura/Aura.h"
 #include "EnhancedInputSubsystems.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
@@ -109,7 +109,7 @@ void AAuraPlayerController::Move(const FInputActionValue& Value)
 
 void AAuraPlayerController::CursorTrace()
 {
-	GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHit);
+	GetHitResultUnderCursor(ECC_CursorTrace, false, CursorHit);
 
 	LastActor = ThisActor;
 	ThisActor = CursorHit.GetActor();

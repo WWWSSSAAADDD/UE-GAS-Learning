@@ -29,9 +29,6 @@ TArray<FVector> UAuraSummonAbility::GetSummonLocations()
 		FHitResult Hit;
 		Avatar->GetWorld()->LineTraceSingleByChannel(Hit, SummonLocation + FVector(0, 0, 400.f), SummonLocation + FVector(0, 0, -400.f), ECC_WorldStatic);
 		SummonLocations.Add(Hit.Location);
-
-		DrawDebugLine(Avatar->GetWorld(), Origin, Origin + Direction * MaxDistance, FColor::Blue, false, 4.f);
-		DrawDebugSphere(Avatar->GetWorld(), SummonLocation, 20.f, 12, FColor::Cyan, false, 4.f);
 	}
 
 	return SummonLocations;

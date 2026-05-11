@@ -42,7 +42,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 	FTransform Transform;
 	FVector SpawnLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
+	FRotator SpawnRotation = (ProjectileTargetLocation - SpawnLocation).Rotation();
+	SpawnRotation.Pitch += PitchOffsetDegrees;
 	Transform.SetLocation(SpawnLocation);
+	Transform.SetRotation(SpawnRotation.Quaternion());
 
 	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 		ProjectileClass,
