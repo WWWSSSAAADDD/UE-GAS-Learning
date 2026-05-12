@@ -61,6 +61,7 @@ void AAuraCharacter::InitAbilityActorInfo() {
 		}
 	}
 
+	if (!HasAuthority()) return;
 	/* 初始化Primary、Secondary Attributes */
 	InitDefaultAttributes();
 }
