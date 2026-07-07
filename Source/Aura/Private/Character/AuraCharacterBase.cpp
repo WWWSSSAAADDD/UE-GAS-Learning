@@ -107,16 +107,21 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
 
+	// 开启物理模拟
 	Weapon->SetSimulatePhysics(true);
+	// 开启重力
 	Weapon->SetEnableGravity(true);
+	// 关闭碰撞检测
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	// 调整对WorldStatic通道的碰撞检测
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// 溶解特效
 	Dissolve();
 }
 

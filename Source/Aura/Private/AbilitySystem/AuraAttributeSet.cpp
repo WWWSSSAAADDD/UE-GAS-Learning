@@ -141,21 +141,23 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
-
-	if (Data.EvaluatedData.Attribute == GetInComingDamageAttribute())
-	{
-		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
-		UE_LOG(LogTemp, Warning, TEXT("SourAvatar: %s"), *Props.SourceAvatarActor->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("TargetAvatar: %s"), *Props.TargetAvatarActor->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Health from Actor Applied GE: %f"), GetHealth());
-		UE_LOG(LogTemp, Warning, TEXT("Magnitude: %f"), Data.EvaluatedData.Magnitude);
-	}
+	
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
 	}
 	if (Data.EvaluatedData.Attribute == GetInComingDamageAttribute())
 	{
+		
+		if (Props.SourceAvatarActor)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SourceAvatar: %s"), *Props.SourceAvatarActor->GetName());
+		}
+		if (Props.TargetAvatarActor)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("TargetAvatar: %s"), *Props.TargetAvatarActor->GetName());
+		}
+		
 		const float DamageValue = GetInComingDamage();
 		SetInComingDamage(0.f);
 		if (DamageValue > 0.f)

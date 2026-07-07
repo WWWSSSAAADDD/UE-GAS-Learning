@@ -18,7 +18,7 @@ struct FWidgetControllerParams;
  * 
  */
 UCLASS()
-class AURA_API AAuraHUD : public AHUD
+class AURA_API  AAuraHUD : public AHUD
 {
 	GENERATED_BODY()
 
