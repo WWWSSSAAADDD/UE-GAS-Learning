@@ -53,19 +53,31 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			}
 		);
 
-	// 接受GE AssetTags广播以后，如果是MessageTag，则给MessageWidgetRowDelegate广播
-	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->GameplayEffectAssetTagsDelegate.AddLambda(
-		[this](const FGameplayTagContainer& AssetTags)
-		{
-			for (const FGameplayTag& MessageTag : AssetTags)
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AuraASC->bStartupAbilitiesGiven ? OnInitializeStartupAbilities(AuraASC) :
+			AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
+		
+		// 接受GE AssetTags广播以后，如果是MessageTag，则给MessageWidgetRowDelegate广播
+		AuraASC->GameplayEffectAssetTagsDelegate.AddLambda(
+			[this](const FGameplayTagContainer& AssetTags)
 			{
-				FGameplayTag MessageTagRoot = FGameplayTag::RequestGameplayTag(FName("Message"));
-				if (MessageTag.MatchesTag(MessageTagRoot))
+				for (const FGameplayTag& MessageTag : AssetTags)
 				{
-					FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, MessageTag);
-					MessageWidgetRowDelegate.Broadcast(*Row);
+					FGameplayTag MessageTagRoot = FGameplayTag::RequestGameplayTag(FName("Message"));
+					if (MessageTag.MatchesTag(MessageTagRoot))
+					{
+						FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, MessageTag);
+						MessageWidgetRowDelegate.Broadcast(*Row);
+					}
 				}
 			}
-		}
-	);
+		);
+	}
+}
+
+void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC)
+{
+	// TODO: Get given abilities, look up their ability info, then broadcast to UI widget.
+	if (!AuraASC->bStartupAbilitiesGiven) return;
 }

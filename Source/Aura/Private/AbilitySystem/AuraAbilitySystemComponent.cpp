@@ -24,6 +24,8 @@ void UAuraAbilitySystemComponent::AddGameplayAbilities(const TArray<TSubclassOf<
 			GiveAbility(AbilitySpec);
 		}
 	}
+	bStartupAbilitiesGiven = true;
+	AbilitiesGivenDelegate.Broadcast(this);  // 此时StartupAbilities已经赋予，能够从ASC拿到Ability
 }
 
 void UAuraAbilitySystemComponent::OnAbilityInputPressed(FGameplayTag InputTag)

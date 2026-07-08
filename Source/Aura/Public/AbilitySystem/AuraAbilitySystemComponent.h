@@ -6,7 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "AuraAbilitySystemComponent.generated.h"
 
+class UAuraAbilitySystemComponent;
 DECLARE_MULTICAST_DELEGATE_OneParam(FGameplayEffectAssetTagsSignature, const FGameplayTagContainer&);
+DECLARE_MULTICAST_DELEGATE_OneParam(FAbilitiesGivenDelegateSignature, UAuraAbilitySystemComponent*);
 
 /**
  * 
@@ -21,7 +23,10 @@ public:
 
 	//  广播GE的AssetTags，
 	FGameplayEffectAssetTagsSignature GameplayEffectAssetTagsDelegate;
-
+	
+	FAbilitiesGivenDelegateSignature AbilitiesGivenDelegate;
+	bool bStartupAbilitiesGiven = false;
+	
 	void AddGameplayAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AbilityClasses);
 
 	void OnAbilityInputPressed(FGameplayTag InputTag);

@@ -8,6 +8,9 @@
 #include "OverlayWidgetController.generated.h"
 
 
+class UAuraAbilitySystemComponent;
+class UAbilityInfo;
+
 USTRUCT(BlueprintType)
 struct FUIWidgetRow : public FTableRowBase
 {
@@ -68,6 +71,11 @@ protected:
 
 	template<typename RowType>
 	RowType* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+	
+	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
 };
 
 template<typename RowType>
