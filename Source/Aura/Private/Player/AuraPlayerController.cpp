@@ -148,20 +148,20 @@ void AAuraPlayerController::OnAbilityInputPressed(FGameplayTag Tag)
 
 void AAuraPlayerController::OnAbilityInputReleased(FGameplayTag Tag)
 {
-	// 如果Tag不是Input_LMB
+	// 如果Tag不是Input_LMB，则一定不是移动相关逻辑，可能是释放技能
 	if (!FAuraGameplayTags::Get().InputTag_LMB.MatchesTagExact(Tag))
 	{
 		if (GetAuraASC() == nullptr)
 			return;
-		GetAuraASC()->OnAbilityInputPressed(Tag);
+		GetAuraASC()->OnAbilityInputReleased(Tag);
 	}
 
-	// 如果Tag是Input_LMB
-	// 先告知ASC鼠标左键Released了
+	// 如果Tag是Input_LMB，既可能是技能释放，也可能是移动逻辑
+	// 技能释放：先告知ASC鼠标左键Released了
 	if (GetAuraASC())
 		GetAuraASC()->OnAbilityInputReleased(Tag);
 
-	// 如果没有指向目标 && 没有按住Shift，则进行移动
+	// 移动逻辑：如果没有指向目标 && 没有按住Shift，则进行移动
 	if (!bTargeting && !bShiftDown)
 	{
 		APawn* ControlledPawn = GetPawn();
