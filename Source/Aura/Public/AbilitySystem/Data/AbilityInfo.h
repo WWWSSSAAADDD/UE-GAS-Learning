@@ -15,7 +15,7 @@ struct FAuraAbilityInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag AbilityTag = FGameplayTag();
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag InputTag = FGameplayTag();
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -32,9 +32,10 @@ UCLASS()
 class AURA_API UAbilityInfo : public UDataAsset
 {
 	GENERATED_BODY()
+public:
+	FAuraAbilityInfo FindAbilityInfoForTag(FGameplayTag Tag);
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AbilityInfo")
 	TArray<FAuraAbilityInfo> AbilityInformation;
 	
-	FAuraAbilityInfo FindAbilityInfoForTag(FGameplayTag Tag);
 };

@@ -9,7 +9,7 @@
 class UAuraAbilitySystemComponent;
 DECLARE_MULTICAST_DELEGATE_OneParam(FGameplayEffectAssetTagsSignature, const FGameplayTagContainer&);
 DECLARE_MULTICAST_DELEGATE_OneParam(FAbilitiesGivenDelegateSignature, UAuraAbilitySystemComponent*);
-
+DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
 /**
  * 
  */
@@ -23,9 +23,9 @@ public:
 
 	//  广播GE的AssetTags，
 	FGameplayEffectAssetTagsSignature GameplayEffectAssetTagsDelegate;
-	
-	FAbilitiesGivenDelegateSignature AbilitiesGivenDelegate;
 	bool bStartupAbilitiesGiven = false;
+	FAbilitiesGivenDelegateSignature AbilitiesGivenDelegate;
+	void ForEachAbility(const FForEachAbility& Delegate);
 	
 	void AddGameplayAbilities(const TArray<TSubclassOf<UGameplayAbility>>& AbilityClasses);
 
@@ -33,11 +33,14 @@ public:
 	void OnAbilityInputReleased(FGameplayTag InputTag);
 	void OnAbilityInputHeld(FGameplayTag InputTag);
 
+	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 protected:
 
 	// 当GE对自己生效以后，会触发此函数。目前用于广播GE AssetTags，让OverlayWidgetController判断MessageTag来生成MessageUI
 	UFUNCTION(Client, Reliable)
 	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
 
+	virtual void OnRep_ActivateAbilities() override;
 private:
 };

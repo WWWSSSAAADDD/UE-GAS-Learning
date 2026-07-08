@@ -4,6 +4,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -55,8 +56,8 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
 	{
-		AuraASC->bStartupAbilitiesGiven ? OnInitializeStartupAbilities(AuraASC) :
-			AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
+		if (AuraASC->bStartupAbilitiesGiven) OnInitializeStartupAbilities(AuraASC);
+		else AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
 		
 		// 接受GE AssetTags广播以后，如果是MessageTag，则给MessageWidgetRowDelegate广播
 		AuraASC->GameplayEffectAssetTagsDelegate.AddLambda(
@@ -80,4 +81,13 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemCo
 {
 	// TODO: Get given abilities, look up their ability info, then broadcast to UI widget.
 	if (!AuraASC->bStartupAbilitiesGiven) return;
+	
+	FForEachAbility Delegate;
+	Delegate.BindLambda([this, AuraASC](const FGameplayAbilitySpec& AbilitySpec)
+	{
+		FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AuraASC->GetAbilityTagFromSpec(AbilitySpec));
+		Info.InputTag = AuraASC->GetInputTagFromSpec(AbilitySpec);
+		AbilityInfoDelegate.Broadcast(Info);
+	});
+	AuraASC->ForEachAbility(Delegate);
 }
