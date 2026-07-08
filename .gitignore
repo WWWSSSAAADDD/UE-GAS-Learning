@@ -5,6 +5,8 @@ Saved
 Build
 学习指导/
 
+.idea/
+Plugins/Developer/RiderLink/
 .vscode
 .vs
 *.VC.db
