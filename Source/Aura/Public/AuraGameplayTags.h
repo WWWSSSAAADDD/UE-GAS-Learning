@@ -59,6 +59,8 @@ public:
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 
+	FGameplayTag Abilities_Fire_FireBolt;
+	
 	/* Effect Tags，用Tag来激活GA */
 	FGameplayTag Effects_HitReact;
 

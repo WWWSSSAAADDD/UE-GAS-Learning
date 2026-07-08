@@ -63,7 +63,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	Get().Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Attack"), FString("攻击"));
 	Get().Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Summon"), FString("召唤"));
-
+	
+	Get().Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBolt"), FString("火焰技能-火焰箭"));
+	
 	/* End Ability Tags*/
 
 	/* Socket Tags, 用于寻找攻击使用的SocketName*/
