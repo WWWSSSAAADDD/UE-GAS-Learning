@@ -61,6 +61,10 @@ public:
 
 	FGameplayTag Abilities_Fire_FireBolt;
 	
+	/* CoolDown Tags */
+	FGameplayTag Cooldown_Fire_FireBolt;
+    
+	
 	/* Effect Tags，用Tag来激活GA */
 	FGameplayTag Effects_HitReact;
 

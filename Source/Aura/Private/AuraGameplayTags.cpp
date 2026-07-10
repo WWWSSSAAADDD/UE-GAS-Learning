@@ -66,6 +66,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	
 	Get().Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBolt"), FString("火焰技能-火焰箭"));
 	
+	/* Cooldown Tags */
+	Get().Cooldown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Fire.FireBolt"), FString("火焰技能-火焰箭的冷却时间"));
+	
 	/* End Ability Tags*/
 
 	/* Socket Tags, 用于寻找攻击使用的SocketName*/
